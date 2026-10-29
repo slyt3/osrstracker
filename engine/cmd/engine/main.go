@@ -17,12 +17,14 @@ import (
 
 	"github.com/osrstracker/engine/internal/api"
 	"github.com/osrstracker/engine/internal/cache"
+	"github.com/osrstracker/engine/internal/poller"
 	"github.com/osrstracker/engine/internal/source"
 )
 
 func main() {
 	addr := envOr("ENGINE_ADDR", ":8080")
 	userAgent := envOr("WIKI_USER_AGENT", "osrstracker (dev; contact: set WIKI_USER_AGENT)")
+	interval := envDuration("POLL_INTERVAL", 60*time.Second)
 
 	// Wire the dependencies: a price source, a board cache, and the HTTP API.
 	src := source.NewWikiPriceSource(userAgent)
@@ -32,24 +34,27 @@ func main() {
 		Handler: api.NewRouter(board, src),
 	}
 
-	// TODO(M1): start the poller goroutine here — poll src every ~60s, run the
-	// flip engine, and store the result in board.
+	// ctx cancels on SIGINT/SIGTERM and drives the background poller.
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	// Graceful shutdown on SIGINT/SIGTERM.
+	// Background: refresh the board from the Wiki on an interval.
+	p := poller.New(src, board, interval)
+	go p.Run(ctx)
+
+	// Foreground: serve HTTP.
 	go func() {
-		log.Printf("engine listening on %s", addr)
+		log.Printf("engine listening on %s (poll interval %s)", addr, interval)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("http server: %v", err)
 		}
 	}()
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	<-stop
+	<-ctx.Done()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(shutdownCtx); err != nil {
 		log.Printf("shutdown: %v", err)
 	}
 	log.Println("engine stopped")
@@ -58,6 +63,16 @@ func main() {
 func envOr(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
+	}
+	return fallback
+}
+
+func envDuration(key string, fallback time.Duration) time.Duration {
+	if v := os.Getenv(key); v != "" {
+		if d, err := time.ParseDuration(v); err == nil {
+			return d
+		}
+		log.Printf("invalid %s=%q, using %s", key, v, fallback)
 	}
 	return fallback
 }
