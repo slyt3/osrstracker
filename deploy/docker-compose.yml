@@ -1,0 +1,24 @@
+# Local development dependencies. In production Postgres runs natively on the
+# VPS (see architecture.md "Deployment"); this file is for `docker compose up`
+# on a dev machine.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: osrstracker-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: osrs
+      POSTGRES_PASSWORD: osrs
+      POSTGRES_DB: osrstracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U osrs -d osrstracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
