@@ -196,6 +196,17 @@ table.board td a:hover { color: var(--gold-2); }
 .notice { background: var(--panel); border: 1px solid var(--line-2); color: var(--muted);
   border-radius: var(--r); padding: 1rem 1.2rem; }
 
+/* journal form */
+.journal-form { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: flex-end; margin: 1.2rem 0;
+  padding: 1.2rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+.journal-form label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.68rem;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); font-weight: 600; }
+.journal-form input, .journal-form select { padding: 0.5rem 0.6rem; border: 1px solid var(--line-2);
+  border-radius: 7px; background: var(--bg); color: var(--text); font: inherit; }
+.journal-form input[type=number] { width: 8rem; font-family: var(--font-mono); }
+.journal-form input:focus, .journal-form select:focus { outline: none; border-color: var(--gold); }
+.jf-err { flex-basis: 100%; color: var(--red); font-size: 0.85rem; margin: 0.2rem 0 0; }
+
 /* watchlist star */
 table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align: center; padding-left: 0.6rem; padding-right: 0; }
 .star { background: none; border: 0; cursor: pointer; font-size: 1.05rem; line-height: 1; color: var(--faint); padding: 0.2rem; transition: color 0.12s; }
