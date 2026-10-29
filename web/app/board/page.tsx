@@ -1,4 +1,5 @@
 import { getBoard } from "@/lib/engine";
+import { getWatchlistIds } from "@/lib/watchlist";
 import FlipBoard from "@/components/FlipBoard";
 
 // The live flip board — public, no auth. Live data, so render per request.
@@ -10,7 +11,10 @@ export const metadata = {
 };
 
 export default async function BoardPage() {
-  const board = await getBoard().catch(() => null);
+  const [board, starred] = await Promise.all([
+    getBoard().catch(() => null),
+    getWatchlistIds().catch(() => [] as number[]),
+  ]);
 
   return (
     <main>
@@ -22,15 +26,11 @@ export default async function BoardPage() {
 
       <div className="container">
         {board === null ? (
-          <p className="notice">
-            The price engine is unreachable right now. Try again in a moment.
-          </p>
+          <p className="notice">The price engine is unreachable right now. Try again in a moment.</p>
         ) : board.rows.length === 0 ? (
-          <p className="notice" style={{ background: "rgba(240,169,62,.08)", borderColor: "var(--border-2)", color: "var(--muted)" }}>
-            No rows yet — the poller is warming up. Give it a minute.
-          </p>
+          <p className="notice">No rows yet — the poller is warming up. Give it a minute.</p>
         ) : (
-          <FlipBoard rows={board.rows} ts={board.ts} />
+          <FlipBoard rows={board.rows} ts={board.ts} starred={starred} />
         )}
       </div>
     </main>

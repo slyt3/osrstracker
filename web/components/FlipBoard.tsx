@@ -15,12 +15,49 @@ const COLUMNS: { key: SortKey; label: string }[] = [
 const MAX_ROWS = 100;
 const fmt = (n: number) => n.toLocaleString("en-US");
 
-export default function FlipBoard({ rows, ts }: { rows: Row[]; ts: number }) {
+export default function FlipBoard({
+  rows,
+  ts,
+  starred = [],
+}: {
+  rows: Row[];
+  ts: number;
+  starred?: number[];
+}) {
   const [sortKey, setSortKey] = useState<SortKey>("margin");
   const [query, setQuery] = useState("");
   const [minMargin, setMinMargin] = useState<number>(1); // hide non-profitable by default
   const [minVolume, setMinVolume] = useState<number>(0);
   const [minRoi, setMinRoi] = useState<number>(0); // percent
+  const [stars, setStars] = useState<Set<number>>(() => new Set(starred));
+
+  async function toggleStar(id: number) {
+    const on = stars.has(id);
+    setStars((prev) => {
+      const next = new Set(prev);
+      if (on) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    try {
+      const res = on
+        ? await fetch(`/api/watchlist/${id}`, { method: "DELETE" })
+        : await fetch(`/api/watchlist`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ itemId: id }),
+          });
+      if (!res.ok) throw new Error();
+    } catch {
+      // revert on failure
+      setStars((prev) => {
+        const next = new Set(prev);
+        if (on) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -73,6 +110,7 @@ export default function FlipBoard({ rows, ts }: { rows: Row[]; ts: number }) {
         <table className="board">
           <thead>
             <tr>
+              <th aria-label="Watch" />
               <th className="left">Item</th>
               <th>Buy</th>
               <th>Sell</th>
@@ -92,21 +130,35 @@ export default function FlipBoard({ rows, ts }: { rows: Row[]; ts: number }) {
             </tr>
           </thead>
           <tbody>
-            {shown.map((r) => (
-              <tr key={r.itemId}>
-                <td className="left">
-                  <a href={`/item/${r.itemId}`}>{r.name}</a>
-                </td>
-                <td className="tnum">{fmt(r.buy)}</td>
-                <td className="tnum">{fmt(r.sell)}</td>
-                <td className="tnum" style={{ color: "var(--faint)" }}>{fmt(r.tax)}</td>
-                <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")}>{fmt(r.margin)}</td>
-                <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
-                <td className="tnum">{fmt(r.profitLimit)}</td>
-                <td className="tnum">{fmt(r.hourlyVolume)}</td>
-                <td className="tnum">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
-              </tr>
-            ))}
+            {shown.map((r) => {
+              const on = stars.has(r.itemId);
+              return (
+                <tr key={r.itemId}>
+                  <td className="starcell">
+                    <button
+                      className={"star" + (on ? " on" : "")}
+                      onClick={() => toggleStar(r.itemId)}
+                      aria-label={on ? "Remove from watchlist" : "Add to watchlist"}
+                      aria-pressed={on}
+                      title={on ? "Remove from watchlist" : "Add to watchlist"}
+                    >
+                      {on ? "★" : "☆"}
+                    </button>
+                  </td>
+                  <td className="left">
+                    <a href={`/item/${r.itemId}`}>{r.name}</a>
+                  </td>
+                  <td className="tnum">{fmt(r.buy)}</td>
+                  <td className="tnum">{fmt(r.sell)}</td>
+                  <td className="tnum" style={{ color: "var(--faint)" }}>{fmt(r.tax)}</td>
+                  <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")}>{fmt(r.margin)}</td>
+                  <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
+                  <td className="tnum">{fmt(r.profitLimit)}</td>
+                  <td className="tnum">{fmt(r.hourlyVolume)}</td>
+                  <td className="tnum">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
