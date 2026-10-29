@@ -29,7 +29,7 @@ A web app for Old School RuneScape players: a live Grand Exchange **flip board**
 | M1 flip board (poller + flip engine + `/board` + UI) | ✅ done, live |
 | M2 per-item price charts (`/timeseries` + `/item/[id]`) | ✅ done, live |
 | M3 watchlist + journal/P&L | ✅ done, live |
-| M4 alerts (Discord) | ✅ done, live (checker fires + records; **Discord delivery needs a webhook URL set — see below**) |
+| M4 alerts (Discord) | ✅ done, live & delivering to Discord (webhook URL set in the engine's `.env` on the server, not in the repo) |
 | M4 live websocket (`/live`) | ⬜ **not done** (deferred; the board refreshes per request) |
 | M5 capital allocator | ⬜ |
 | M6 auth (replace dev user) | ⬜ |
@@ -61,10 +61,10 @@ Full detail in [deploy/SERVER.md](./deploy/SERVER.md). Essentials:
 - Manage: `sudo systemctl restart osrstracker-{engine,web}`, logs via
   `sudo journalctl -u osrstracker-engine -f`.
 
-### Discord alerts — not yet delivering
-The engine alert checker runs and records `AlertEvent`s, but **only logs** until
-`DISCORD_WEBHOOK_URL` is set in `/home/osrstracker/engine/.env` (then restart the
-engine). Ask the user for a webhook URL to enable real pings.
+### Discord alerts — live
+`DISCORD_WEBHOOK_URL` is set in `/home/osrstracker/engine/.env` (not in the repo —
+it's a secret), so firings post to the user's Discord channel. To change the
+target channel, replace that value and restart the engine.
 
 ---
 

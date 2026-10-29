@@ -78,7 +78,7 @@ Features first, **auth and payments last** — they're bolt-ons, not foundations
 | **M1** | Flip board — Go poller + flip engine + `/board`, UI with filters & ranking toggles | ✅ done, live |
 | **M2** | Per-item price charts (`/timeseries`) | ✅ done, live |
 | **M3** | Watchlist + Journal / P&L *(dev user)* | ✅ done, live |
-| **M4** | Alerts + live websocket updates *(dev user)* | 🟡 alerts done (Discord — needs a webhook URL to deliver); websocket ⬜ |
+| **M4** | Alerts + live websocket updates *(dev user)* | 🟡 alerts done & delivering to Discord; websocket ⬜ |
 | **M5** | Capital allocator | ⬜ next up |
 | **M6** | **Auth** — swap dev user for real accounts | ⬜ |
 | **M7** | **Stripe** billing + free/Pro gating | ⬜ |
