@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Row } from "@/lib/engine";
+import { isLowLiquidity } from "@/lib/liquidity";
 
 type SortKey = "margin" | "roi" | "profitLimit" | "hourlyVolume";
 
@@ -132,8 +133,9 @@ export default function FlipBoard({
           <tbody>
             {shown.map((r) => {
               const on = stars.has(r.itemId);
+              const thin = isLowLiquidity(r);
               return (
-                <tr key={r.itemId}>
+                <tr key={r.itemId} className={thin ? "thin" : undefined}>
                   <td className="starcell">
                     <button
                       className={"star" + (on ? " on" : "")}
@@ -154,7 +156,12 @@ export default function FlipBoard({
                   <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")}>{fmt(r.margin)}</td>
                   <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
                   <td className="tnum">{fmt(r.profitLimit)}</td>
-                  <td className="tnum">{fmt(r.hourlyVolume)}</td>
+                  <td className="tnum">
+                    {thin && (
+                      <span className="thin-flag" title="Low volume — this margin may be stale and hard to fill">⚠ </span>
+                    )}
+                    {fmt(r.hourlyVolume)}
+                  </td>
                   <td className="tnum">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
                 </tr>
               );

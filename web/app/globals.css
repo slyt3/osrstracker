@@ -208,6 +208,13 @@ table.board td a:hover { color: var(--gold-2); }
 .jf-err { flex-basis: 100%; color: var(--red); font-size: 0.85rem; margin: 0.2rem 0 0; }
 .jf-ok { flex-basis: 100%; color: var(--green); font-size: 0.85rem; margin: 0.2rem 0 0; }
 
+/* low-liquidity flag + warning note */
+.thin-flag { color: #e8933a; cursor: help; }
+table.board tbody tr.thin .left a { color: var(--muted); }
+.warn-note { background: rgba(232, 147, 58, 0.07); border: 1px solid #5a4a2e; color: var(--muted);
+  border-radius: var(--r); padding: 0.9rem 1.1rem; margin: 0 0 1.2rem; font-size: 0.9rem; line-height: 1.55; }
+.warn-note strong { color: #e8933a; }
+
 /* watchlist star */
 table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align: center; padding-left: 0.6rem; padding-right: 0; }
 .star { background: none; border: 0; cursor: pointer; font-size: 1.05rem; line-height: 1; color: var(--faint); padding: 0.2rem; transition: color 0.12s; }
