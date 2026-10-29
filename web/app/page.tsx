@@ -1,42 +1,25 @@
 import { getBoard } from "@/lib/engine";
+import FlipBoard from "@/components/FlipBoard";
 
 // The flip board — public, no auth. Server component: fetches the board from
-// the Go engine at request time. Filters and ranking toggles land in M1.
+// the Go engine, then hands the rows to a client component that filters and
+// ranks them in the browser.
 export default async function Home() {
   const board = await getBoard().catch(() => null);
 
   return (
-    <main style={{ fontFamily: "system-ui, sans-serif", padding: "2rem", maxWidth: 960, margin: "0 auto" }}>
+    <main>
       <h1>OSRS Tracker</h1>
-      <p>Live Grand Exchange flip board.</p>
+      <p>Live Grand Exchange flip board — buy low, sell high (after the 2% GE tax).</p>
 
       {board === null ? (
-        <p style={{ color: "#b45309" }}>
+        <p style={{ color: "var(--neg)" }}>
           Engine unreachable. Start the Go service and set <code>ENGINE_URL</code>.
         </p>
       ) : board.rows.length === 0 ? (
-        <p>No rows yet — the poller has not produced a board (M1).</p>
+        <p>No rows yet — the poller has not produced a board. Give it a minute.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Buy</th>
-              <th>Sell</th>
-              <th>Margin</th>
-            </tr>
-          </thead>
-          <tbody>
-            {board.rows.map((r) => (
-              <tr key={r.itemId}>
-                <td>{r.name}</td>
-                <td>{r.buy}</td>
-                <td>{r.sell}</td>
-                <td>{r.margin}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <FlipBoard rows={board.rows} ts={board.ts} />
       )}
     </main>
   );
