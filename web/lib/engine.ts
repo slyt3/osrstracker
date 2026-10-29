@@ -6,6 +6,7 @@ const ENGINE_URL = process.env.ENGINE_URL ?? "http://localhost:8080";
 export interface Row {
   itemId: number;
   name: string;
+  members: boolean;
   buy: number;
   sell: number;
   tax: number;

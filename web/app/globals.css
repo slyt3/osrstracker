@@ -172,10 +172,10 @@ section { padding: 3.5rem 0; }
 .controls input[type=search] { min-width: 13rem; }
 .controls label { display: flex; flex-direction: column; font-size: 0.68rem; color: var(--faint);
   text-transform: uppercase; letter-spacing: 0.1em; gap: 0.3rem; font-weight: 600; }
-.controls input { padding: 0.5rem 0.6rem; border: 1px solid var(--line-2); border-radius: 7px;
+.controls input, .controls select { padding: 0.5rem 0.6rem; border: 1px solid var(--line-2); border-radius: 7px;
   background: var(--bg); color: var(--text); font: inherit; }
 .controls input[type=number] { width: 7.5rem; font-family: var(--font-mono); }
-.controls input:focus { outline: none; border-color: var(--gold); }
+.controls input:focus, .controls select:focus { outline: none; border-color: var(--gold); }
 
 .meta { font-size: 0.82rem; color: var(--faint); margin: 0.4rem 0 1rem; }
 .board-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); }

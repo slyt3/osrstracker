@@ -30,6 +30,7 @@ export default function FlipBoard({
   const [minMargin, setMinMargin] = useState<number>(1); // hide non-profitable by default
   const [minVolume, setMinVolume] = useState<number>(0);
   const [minRoi, setMinRoi] = useState<number>(0); // percent
+  const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
   const [stars, setStars] = useState<Set<number>>(() => new Set(starred));
 
   async function toggleStar(id: number) {
@@ -67,11 +68,12 @@ export default function FlipBoard({
         r.margin >= minMargin &&
         r.hourlyVolume >= minVolume &&
         r.roi * 100 >= minRoi &&
+        (members === "all" || (members === "p2p" ? r.members : !r.members)) &&
         (q === "" || r.name.toLowerCase().includes(q)),
     );
     out.sort((a, b) => b[sortKey] - a[sortKey]);
     return out;
-  }, [rows, sortKey, query, minMargin, minVolume, minRoi]);
+  }, [rows, sortKey, query, minMargin, minVolume, minRoi, members]);
 
   const shown = filtered.slice(0, MAX_ROWS);
   const updated = ts ? new Date(ts * 1000).toLocaleTimeString() : "—";
@@ -100,6 +102,14 @@ export default function FlipBoard({
           Min ROI %
           <input type="number" value={minRoi} min={0} step={0.5}
             onChange={(e) => setMinRoi(Number(e.target.value) || 0)} />
+        </label>
+        <label>
+          Members
+          <select value={members} onChange={(e) => setMembers(e.target.value as "all" | "p2p" | "f2p")}>
+            <option value="all">All</option>
+            <option value="p2p">Members</option>
+            <option value="f2p">F2P</option>
+          </select>
         </label>
       </div>
 
@@ -149,6 +159,7 @@ export default function FlipBoard({
                   </td>
                   <td className="left">
                     <a href={`/item/${r.itemId}`}>{r.name}</a>
+                    {r.members ? <span className="mtag" title="Members only">P</span> : null}
                   </td>
                   <td className="tnum">{fmt(r.buy)}</td>
                   <td className="tnum">{fmt(r.sell)}</td>

@@ -32,7 +32,7 @@ func TestTax(t *testing.T) {
 
 func TestCompute(t *testing.T) {
 	mapping := []source.Mapping{
-		{ID: 1, Name: "Item A", BuyLimit: 100},
+		{ID: 1, Name: "Item A", BuyLimit: 100, Members: true},
 		{ID: 2, Name: "Item B", BuyLimit: 10},
 		{ID: 3, Name: "No price", BuyLimit: 5}, // dropped: no latest entry
 	}
@@ -71,6 +71,9 @@ func TestCompute(t *testing.T) {
 	}
 	if m[2].Margin != 80 {
 		t.Errorf("item 2 margin: got %d want 80", m[2].Margin)
+	}
+	if !m[1].Members || m[2].Members {
+		t.Errorf("members flag: item1=%v (want true), item2=%v (want false)", m[1].Members, m[2].Members)
 	}
 
 	// Ranking: margin -> B(80) first; roi -> A(0.225) first; profitLimit -> A(4500) first.

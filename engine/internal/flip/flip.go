@@ -37,6 +37,7 @@ func Tax(sellPrice int64, exempt bool) int64 {
 type Row struct {
 	ItemID       source.ItemID `json:"itemId"`
 	Name         string        `json:"name"`
+	Members      bool          `json:"members"`      // members-only item
 	Buy          int64         `json:"buy"`          // price you buy at (~the low/bid)
 	Sell         int64         `json:"sell"`         // price you sell at (~the high/ask)
 	Tax          int64         `json:"tax"`          // GE tax on the sale
@@ -88,6 +89,7 @@ func Compute(
 		rows = append(rows, Row{
 			ItemID:       m.ID,
 			Name:         m.Name,
+			Members:      m.Members,
 			Buy:          buy,
 			Sell:         sell,
 			Tax:          tax,
