@@ -20,10 +20,12 @@ export default function FlipBoard({
   rows,
   ts,
   starred = [],
+  categories = {},
 }: {
   rows: Row[];
   ts: number;
   starred?: number[];
+  categories?: Record<number, string>;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("margin");
   const [query, setQuery] = useState("");
@@ -31,7 +33,13 @@ export default function FlipBoard({
   const [minVolume, setMinVolume] = useState<number>(0);
   const [minRoi, setMinRoi] = useState<number>(0); // percent
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
+  const [category, setCategory] = useState<string>("all");
   const [stars, setStars] = useState<Set<number>>(() => new Set(starred));
+
+  const categoryList = useMemo(
+    () => Array.from(new Set(Object.values(categories))).sort(),
+    [categories],
+  );
 
   async function toggleStar(id: number) {
     const on = stars.has(id);
@@ -69,11 +77,12 @@ export default function FlipBoard({
         r.hourlyVolume >= minVolume &&
         r.roi * 100 >= minRoi &&
         (members === "all" || (members === "p2p" ? r.members : !r.members)) &&
+        (category === "all" || categories[r.itemId] === category) &&
         (q === "" || r.name.toLowerCase().includes(q)),
     );
     out.sort((a, b) => b[sortKey] - a[sortKey]);
     return out;
-  }, [rows, sortKey, query, minMargin, minVolume, minRoi, members]);
+  }, [rows, sortKey, query, minMargin, minVolume, minRoi, members, category, categories]);
 
   const shown = filtered.slice(0, MAX_ROWS);
   const updated = ts ? new Date(ts * 1000).toLocaleTimeString() : "—";
@@ -111,6 +120,15 @@ export default function FlipBoard({
             <option value="f2p">F2P</option>
           </select>
         </label>
+        {categoryList.length > 0 && (
+          <label>
+            Category
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="all">All</option>
+              {categoryList.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </label>
+        )}
       </div>
 
       <p className="meta">

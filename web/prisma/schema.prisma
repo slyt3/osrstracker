@@ -141,3 +141,12 @@ model RecipeMaterial {
   @@index([recipeId])
   @@index([itemId])
 }
+
+// Reference data: one primary category per item (helmets, fish, potions, …),
+// built from the Wiki's category pages by scripts/ingest-categories.mjs.
+model ItemCategory {
+  itemId   Int    @id
+  category String
+
+  @@index([category])
+}

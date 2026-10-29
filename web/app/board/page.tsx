@@ -1,5 +1,6 @@
 import { getBoard } from "@/lib/engine";
 import { getWatchlistIds } from "@/lib/watchlist";
+import { getCategoryMap } from "@/lib/categories";
 import FlipBoard from "@/components/FlipBoard";
 
 // The live flip board — public, no auth. Live data, so render per request.
@@ -11,9 +12,10 @@ export const metadata = {
 };
 
 export default async function BoardPage() {
-  const [board, starred] = await Promise.all([
+  const [board, starred, categories] = await Promise.all([
     getBoard().catch(() => null),
     getWatchlistIds().catch(() => [] as number[]),
+    getCategoryMap().catch(() => ({}) as Record<number, string>),
   ]);
 
   return (
@@ -30,7 +32,7 @@ export default async function BoardPage() {
         ) : board.rows.length === 0 ? (
           <p className="notice">No rows yet — the poller is warming up. Give it a minute.</p>
         ) : (
-          <FlipBoard rows={board.rows} ts={board.ts} starred={starred} />
+          <FlipBoard rows={board.rows} ts={board.ts} starred={starred} categories={categories} />
         )}
       </div>
     </main>
