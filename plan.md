@@ -3,8 +3,11 @@
 A web app for Old School RuneScape players to **track live Grand Exchange prices
 and find profitable flips** (buy low, resell high).
 
-> Status: **planning / pre-build.** No application code yet — this documents
-> what we're building and in what order.
+> Status: **live.** M0–M3 are built and deployed at https://osrstracker.site;
+> M4 is half done (alerts yes, websocket not yet). The site is behind a password
+> for now and all data is a single shared **dev user** until M6. See
+> [HANDOFF.md](./HANDOFF.md) for the current state and
+> [deploy/SERVER.md](./deploy/SERVER.md) for the server.
 
 ---
 
@@ -69,20 +72,31 @@ Features first, **auth and payments last** — they're bolt-ons, not foundations
 > migration, no query rewrites. Features ship ungated; the Pro gate is a one-line
 > guard added at the end.
 
-| Milestone | Delivers |
-|---|---|
-| **M0** | Repo skeleton: Next.js + Go both running, Postgres/Prisma wired, local dev works |
-| **M1** | Flip board — Go poller + flip engine + `/board`, UI with filters & ranking toggles |
-| **M2** | Per-item price charts (`/timeseries`) |
-| **M3** | Watchlist + Journal / P&L *(dev user)* |
-| **M4** | Alerts + live websocket updates *(dev user)* |
-| **M5** | Capital allocator |
-| **M6** | **Auth** — swap dev user for real accounts |
-| **M7** | **Stripe** billing + free/Pro gating |
+| Milestone | Delivers | Status |
+|---|---|---|
+| **M0** | Repo skeleton: Next.js + Go both running, Postgres/Prisma wired, local dev works | ✅ done, live |
+| **M1** | Flip board — Go poller + flip engine + `/board`, UI with filters & ranking toggles | ✅ done, live |
+| **M2** | Per-item price charts (`/timeseries`) | ✅ done, live |
+| **M3** | Watchlist + Journal / P&L *(dev user)* | ✅ done, live |
+| **M4** | Alerts + live websocket updates *(dev user)* | 🟡 alerts done (Discord — needs a webhook URL to deliver); websocket ⬜ |
+| **M5** | Capital allocator | ⬜ next up |
+| **M6** | **Auth** — swap dev user for real accounts | ⬜ |
+| **M7** | **Stripe** billing + free/Pro gating | ⬜ |
+
+Also done beyond the milestones: a marketing **landing page + pricing page**, a
+restrained custom **design** (not the stock AI look), a **baseline Prisma
+migration**, and a **low-liquidity / stale-spread warning** on the board & item
+pages. Not yet done from the spec above: the **`profit per hour`** metric and the
+GE-tax **exempt-item list** (ItemMeta isn't populated).
 
 **Deployment note:** the public board + charts can go live anytime (no auth).
 Per-user features stay local/flagged-off until M6, or every visitor would share one
 global journal.
+
+> **Current reality:** the full app — including the per-user features — is
+> already deployed, all backed by one shared **dev user** and gated behind a
+> site-wide password. So today it's effectively a private, single-user instance;
+> this is the trade-off noted above, accepted consciously until M6 auth.
 
 ## Data source cheat-sheet
 
