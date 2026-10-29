@@ -29,3 +29,14 @@ export async function getBoard(): Promise<BoardResponse> {
   if (!res.ok) throw new Error(`engine /board: ${res.status}`);
   return res.json() as Promise<BoardResponse>;
 }
+
+/** Top profitable, reasonably-liquid flips — for the landing hero. Cached 60s. */
+export async function getTopFlips(n = 6): Promise<Row[]> {
+  const res = await fetch(`${ENGINE_URL}/board`, { next: { revalidate: 60 } });
+  if (!res.ok) throw new Error(`engine /board: ${res.status}`);
+  const data = (await res.json()) as BoardResponse;
+  return data.rows
+    .filter((r) => r.margin > 0 && r.hourlyVolume > 500)
+    .sort((a, b) => b.margin - a.margin)
+    .slice(0, n);
+}

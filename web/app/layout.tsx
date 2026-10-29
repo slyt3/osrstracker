@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Cinzel } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["600", "700", "800", "900"], variable: "--font-cinzel", display: "swap" });
+// Not Inter. Space Grotesk has real character (and tabular figures); JetBrains
+// Mono gives gp values a market-data feel.
+const sans = Space_Grotesk({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: "OSRS Tracker — live Grand Exchange flips",
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cinzel.variable}`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
         <SiteHeader />
         {children}

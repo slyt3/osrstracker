@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Chart, ArrowRight } from "@/components/Icons";
 
 // Per-item detail + price chart — public. Chart lands in M2.
 export default async function ItemPage({
@@ -12,19 +11,16 @@ export default async function ItemPage({
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow"><Link href="/board">← Back to board</Link></p>
-        <h1>Item #{id}</h1>
+        <Link className="back" href="/board">← Back to board</Link>
+        <h1 style={{ marginTop: "0.8rem" }}>Item #{id}</h1>
         <p>Price history and flip detail.</p>
       </div>
 
       <div className="container">
-        <div className="card" style={{ padding: "3rem", textAlign: "center" }}>
-          <div className="ico" style={{ margin: "0 auto 1rem" }}><Chart /></div>
-          <h3 style={{ fontFamily: "var(--font-sans)", margin: "0 0 .4rem" }}>Price chart coming soon</h3>
-          <p style={{ color: "var(--muted)", margin: "0 0 1.4rem" }}>
-            Per-item price history is on the way (milestone M2).
-          </p>
-          <Link className="btn btn-ghost" href="/board">Browse the board <ArrowRight /></Link>
+        <div className="panel" style={{ padding: "3rem 2rem", textAlign: "center" }}>
+          <p style={{ color: "var(--gold)", fontWeight: 600, margin: "0 0 0.4rem" }}>Price chart — coming soon</p>
+          <p style={{ color: "var(--muted)", margin: "0 0 1.4rem" }}>Per-item price history is on the way (milestone M2).</p>
+          <Link className="btn btn-ghost" href="/board">Browse the board</Link>
         </div>
       </div>
     </main>
