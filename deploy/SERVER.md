@@ -59,17 +59,9 @@ cd web && DATABASE_URL=... npx prisma migrate deploy
   `sites-enabled/`).
 - TLS: **Let's Encrypt** cert for `osrstracker.site` + `www.`, auto-renewing via
   certbot's systemd timer. HTTP is 301-redirected to HTTPS.
-- **Currently serves a static placeholder** at `/var/www/osrstracker.site/`.
-
-### Switching from placeholder to the live app
-
-The vhost has both blocks; the proxy block is commented out. To serve the app
-(running on `:3000`), comment the static `root`/`index`/`location /` block and
-uncomment the `proxy_pass http://127.0.0.1:3000` block, then:
-
-```bash
-sudo nginx -t && sudo systemctl reload nginx
-```
+- **Serves the app** by proxying `https://osrstracker.site` → `127.0.0.1:3000`
+  (the Next.js service). The previous static-placeholder vhost is kept as
+  `/etc/nginx/sites-available/osrstracker.site.placeholder.bak`.
 
 Cert issued originally with:
 
@@ -78,38 +70,52 @@ sudo certbot --nginx -d osrstracker.site -d www.osrstracker.site \
   --non-interactive --agree-tos --register-unsafely-without-email --redirect
 ```
 
-## Deploying the app (outline)
+## App deployment (live)
 
-Mirrors how the previous site on this box was run (systemd + node, proxied by
-nginx). For osrstracker:
+The app runs as the dedicated **`osrstracker`** system user (nologin), under
+two systemd services, proxied by nginx:
 
-1. Build `web/` (`npm ci && npm run build`) and run it with `npm start` on
-   `:3000` under a systemd service owned by a dedicated app user.
-2. Build `engine/` (`go build -o engine ./cmd/engine`) and run it on `:8080`
-   under its own systemd service; set `WIKI_USER_AGENT` and `DATABASE_URL`.
-3. Point nginx at the app (see the proxy switch above). If the Go engine is
-   exposed publicly, add an `api.osrstracker.site` vhost → `:8080`.
+| Service | Runs | Port | Path |
+|---|---|---|---|
+| `osrstracker-engine` | the Go binary | `:8080` | `/home/osrstracker/engine/engine` |
+| `osrstracker-web` | `next start` | `:3000` | `/home/osrstracker/web` |
 
-Example systemd unit (web):
+Env files (chmod 600, owned by `osrstracker`):
+`/home/osrstracker/engine/.env` (`ENGINE_ADDR`, `WIKI_USER_AGENT`,
+`POLL_INTERVAL`, `DATABASE_URL`) and `/home/osrstracker/web/.env`
+(`DATABASE_URL`, `ENGINE_URL=http://localhost:8080`).
 
-```ini
-[Unit]
-Description=OSRS Tracker web (Next.js)
-After=network.target postgresql.service
+Unit files: `/etc/systemd/system/osrstracker-{engine,web}.service` (both
+`enable`d). Manage with `systemctl {status,restart} osrstracker-engine` etc.;
+logs via `journalctl -u osrstracker-web`.
 
-[Service]
-Type=simple
-User=osrstracker
-WorkingDirectory=/home/osrstracker/web
-ExecStart=/usr/bin/npm start
-Restart=on-failure
-RestartSec=2
-EnvironmentFile=/home/osrstracker/web/.env   # DATABASE_URL, ENGINE_URL (chmod 600)
-NoNewPrivileges=true
+### How it was deployed / how to redeploy
 
-[Install]
-WantedBy=multi-user.target
+The server has **Node 24 but no Go**, so the engine is cross-compiled locally
+and shipped as a binary; the web app is built on the server.
+
+```bash
+# engine: cross-compile to a static linux binary, upload, replace, restart
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o engine-linux ./cmd/engine
+#   scp engine-linux -> /home/osrstracker/engine/engine ; chmod +x ; chown osrstracker
+sudo systemctl restart osrstracker-engine
+
+# web: upload source (git archive HEAD web), then on the server as osrstracker:
+cd /home/osrstracker/web
+npm ci
+npx prisma generate
+npm run build
+sudo systemctl restart osrstracker-web
 ```
+
+> SFTP on this box is chrooted to the login user's home, so uploads land in
+> `/home/<SERVER_USER>/` and are then `sudo cp`'d into place.
+
+### Database schema
+
+Tables were created with `npx prisma db push` (no migration history yet).
+**TODO:** introduce a baseline Prisma migration and switch deploys to
+`prisma migrate deploy` before the schema carries real user data (M3+).
 
 ## Other
 
