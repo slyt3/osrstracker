@@ -30,7 +30,7 @@ export default function FlipBoard({
   const [sortKey, setSortKey] = useState<SortKey>("margin");
   const [query, setQuery] = useState("");
   const [minMargin, setMinMargin] = useState<number>(1); // hide non-profitable by default
-  const [minVolume, setMinVolume] = useState<number>(0);
+  const [minVolume, setMinVolume] = useState<number>(100); // hide thin/junk items by default
   const [minRoi, setMinRoi] = useState<number>(0); // percent
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
   const [category, setCategory] = useState<string>("all");
