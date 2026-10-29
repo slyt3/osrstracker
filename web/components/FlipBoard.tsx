@@ -69,8 +69,8 @@ export default function FlipBoard({ rows, ts }: { rows: Row[]; ts: number }) {
         Showing {shown.length} of {fmt(filtered.length)} matching ({fmt(rows.length)} total) · updated {updated}
       </p>
 
-      <div className="scroll">
-        <table>
+      <div className="board-scroll">
+        <table className="board">
           <thead>
             <tr>
               <th className="left">Item</th>
@@ -97,42 +97,19 @@ export default function FlipBoard({ rows, ts }: { rows: Row[]; ts: number }) {
                 <td className="left">
                   <a href={`/item/${r.itemId}`}>{r.name}</a>
                 </td>
-                <td>{fmt(r.buy)}</td>
-                <td>{fmt(r.sell)}</td>
-                <td>{fmt(r.tax)}</td>
-                <td className={r.margin > 0 ? "pos" : "neg"}>{fmt(r.margin)}</td>
-                <td>{(r.roi * 100).toFixed(2)}%</td>
-                <td>{fmt(r.profitLimit)}</td>
-                <td>{fmt(r.hourlyVolume)}</td>
-                <td>{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
+                <td className="tnum">{fmt(r.buy)}</td>
+                <td className="tnum">{fmt(r.sell)}</td>
+                <td className="tnum" style={{ color: "var(--faint)" }}>{fmt(r.tax)}</td>
+                <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")}>{fmt(r.margin)}</td>
+                <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
+                <td className="tnum">{fmt(r.profitLimit)}</td>
+                <td className="tnum">{fmt(r.hourlyVolume)}</td>
+                <td className="tnum">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      <style>{`
-        .controls { display:flex; flex-wrap:wrap; gap:.75rem; align-items:flex-end; margin:1rem 0; }
-        .controls input[type=search] { min-width:12rem; }
-        .controls label { display:flex; flex-direction:column; font-size:.75rem; color:var(--muted); gap:.2rem; }
-        .controls input { padding:.4rem .5rem; border:1px solid var(--border); border-radius:6px;
-          background:var(--card); color:inherit; font:inherit; }
-        .controls input[type=number] { width:7rem; }
-        .meta { font-size:.8rem; color:var(--muted); margin:.25rem 0 .75rem; }
-        .scroll { overflow-x:auto; border:1px solid var(--border); border-radius:8px; }
-        table { border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums; font-size:.9rem; }
-        th, td { padding:.45rem .6rem; text-align:right; white-space:nowrap; }
-        th.left, td.left { text-align:left; }
-        thead th { position:sticky; top:0; background:var(--card); border-bottom:1px solid var(--border);
-          font-weight:600; }
-        th.sortable { cursor:pointer; user-select:none; }
-        th.active { color:var(--accent); }
-        tbody tr:nth-child(even) { background:var(--stripe); }
-        td a { color:inherit; text-decoration:none; }
-        td a:hover { text-decoration:underline; }
-        .pos { color:var(--pos); }
-        .neg { color:var(--neg); }
-      `}</style>
     </div>
   );
 }
