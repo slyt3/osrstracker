@@ -23,8 +23,8 @@ export interface BoardResponse {
 
 export async function getBoard(): Promise<BoardResponse> {
   const res = await fetch(`${ENGINE_URL}/board`, {
-    // The board is cached hard at the edge; keep it fresh-ish here.
-    next: { revalidate: 30 },
+    // Always fetch live; the engine already serves a cached, in-memory board.
+    cache: "no-store",
   });
   if (!res.ok) throw new Error(`engine /board: ${res.status}`);
   return res.json() as Promise<BoardResponse>;

@@ -1,6 +1,11 @@
 import { getBoard } from "@/lib/engine";
 import FlipBoard from "@/components/FlipBoard";
 
+// The board is live data, so render on every request rather than prerendering
+// at build time (a build-time prerender bakes in whatever the engine returned
+// then — including "unreachable" if the engine wasn't up during the build).
+export const dynamic = "force-dynamic";
+
 // The flip board — public, no auth. Server component: fetches the board from
 // the Go engine, then hands the rows to a client component that filters and
 // ranks them in the browser.
