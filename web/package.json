@@ -9,7 +9,8 @@
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "ingest:recipes": "node scripts/ingest-recipes.mjs"
   },
   "dependencies": {
     "@prisma/client": "6.1.0",

@@ -106,3 +106,38 @@ model AlertEvent {
 
   @@index([alertId])
 }
+
+// Reference data: OSRS production/crafting recipes scraped from the Wiki's
+// `recipe` bucket. Not per-user. Refreshed by scripts/ingest-recipes.mjs
+// (wipe-and-reload). itemId fields are resolved from the price API /mapping so
+// recipe profitability can join to live prices.
+model Recipe {
+  id           String  @id @default(cuid())
+  subject      String // page_name_sub — the recipe/variant label from the wiki
+  outputName   String
+  outputItemId Int?
+  outputQty    Int     @default(1)
+  members      Boolean @default(false)
+  facilities   String?
+  skillsJson   String? // raw skills array as JSON
+  ticks        Int?
+  raw          String // full production_json blob
+
+  materials RecipeMaterial[]
+
+  @@index([outputItemId])
+  @@index([outputName])
+}
+
+model RecipeMaterial {
+  id       String @id @default(cuid())
+  recipeId String
+  name     String
+  itemId   Int?
+  qty      Int    @default(1)
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@index([itemId])
+}
