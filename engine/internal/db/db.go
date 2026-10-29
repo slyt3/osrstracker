@@ -9,6 +9,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"net/url"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -17,9 +18,19 @@ import (
 
 type DB struct{ pool *pgxpool.Pool }
 
-// Connect opens a pooled connection and verifies it.
-func Connect(ctx context.Context, url string) (*DB, error) {
-	pool, err := pgxpool.New(ctx, url)
+// Connect opens a pooled connection and verifies it. The `schema` query
+// parameter (a Prisma convention) is stripped — libpq rejects it as an unknown
+// runtime setting; tables live in the default `public` schema anyway.
+func Connect(ctx context.Context, dsn string) (*DB, error) {
+	if u, err := url.Parse(dsn); err == nil {
+		q := u.Query()
+		if q.Has("schema") {
+			q.Del("schema")
+			u.RawQuery = q.Encode()
+			dsn = u.String()
+		}
+	}
+	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, err
 	}

@@ -82,8 +82,18 @@ two systemd services, proxied by nginx:
 
 Env files (chmod 600, owned by `osrstracker`):
 `/home/osrstracker/engine/.env` (`ENGINE_ADDR`, `WIKI_USER_AGENT`,
-`POLL_INTERVAL`, `DATABASE_URL`) and `/home/osrstracker/web/.env`
+`POLL_INTERVAL`, `DATABASE_URL`, and for alerts: `DISCORD_WEBHOOK_URL`,
+`ALERT_INTERVAL`, `ALERT_COOLDOWN`) and `/home/osrstracker/web/.env`
 (`DATABASE_URL`, `ENGINE_URL=http://localhost:8080`).
+
+### Alerts (M4)
+
+The engine runs a background **alert checker** (enabled because `DATABASE_URL`
+is set): every minute it reads active `Alert` rows, evaluates margin/price/roi
+against the in-memory board, and on a firing records an `AlertEvent` and posts
+to Discord — with a 30-minute per-alert cooldown. **To enable Discord delivery,
+set `DISCORD_WEBHOOK_URL` in the engine's `.env` and restart the engine**;
+while it's empty the checker still fires and records events but only logs them.
 
 Unit files: `/etc/systemd/system/osrstracker-{engine,web}.service` (both
 `enable`d). Manage with `systemctl {status,restart} osrstracker-engine` etc.;
