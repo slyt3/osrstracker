@@ -1,0 +1,108 @@
+// Prisma owns the database schema — single source of truth for the data model.
+// Live prices are NOT stored here; only users' own records persist. The Go
+// engine reads a couple of these tables (Alert, ItemMeta) but never writes the
+// schema. See architecture.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  free
+  pro
+}
+
+enum AlertKind {
+  margin
+  price
+  roi
+}
+
+enum TradeSide {
+  buy
+  sell
+}
+
+model User {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  plan             Plan     @default(free)
+  stripeCustomerId String?  @unique
+  createdAt        DateTime @default(now())
+
+  watchlist WatchlistItem[]
+  alerts    Alert[]
+  trades    Trade[]
+}
+
+model WatchlistItem {
+  id     String  @id @default(cuid())
+  userId String
+  itemId Int
+  note   String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+  @@index([userId])
+}
+
+model Alert {
+  id        String    @id @default(cuid())
+  userId    String
+  itemId    Int
+  kind      AlertKind
+  op        String // comparison operator, e.g. ">=" or "<="
+  threshold Float
+  channel   String // email | discord | push
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events AlertEvent[]
+
+  @@index([userId])
+  @@index([active])
+}
+
+model Trade {
+  id     String    @id @default(cuid())
+  userId String
+  itemId Int
+  side   TradeSide
+  qty    Int
+  price  Int
+  tax    Int       @default(0)
+  ts     DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, itemId])
+}
+
+// Cached /mapping metadata so the engine and web share item names/limits
+// without re-fetching. Not per-user.
+model ItemMeta {
+  itemId   Int     @id
+  name     String
+  members  Boolean @default(false)
+  buyLimit Int     @default(0)
+  exempt   Boolean @default(false)
+}
+
+model AlertEvent {
+  id          String   @id @default(cuid())
+  alertId     String
+  firedAt     DateTime @default(now())
+  priceAtFire Int
+
+  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  @@index([alertId])
+}
