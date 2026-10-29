@@ -206,6 +206,7 @@ table.board td a:hover { color: var(--gold-2); }
 .journal-form input[type=number] { width: 8rem; font-family: var(--font-mono); }
 .journal-form input:focus, .journal-form select:focus { outline: none; border-color: var(--gold); }
 .jf-err { flex-basis: 100%; color: var(--red); font-size: 0.85rem; margin: 0.2rem 0 0; }
+.jf-ok { flex-basis: 100%; color: var(--green); font-size: 0.85rem; margin: 0.2rem 0 0; }
 
 /* watchlist star */
 table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align: center; padding-left: 0.6rem; padding-right: 0; }
