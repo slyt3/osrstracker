@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+/web/node_modules/
+
+# Next.js
+/web/.next/
+/web/out/
+/web/build/
+
+# Go
+/engine/bin/
+/engine/engine
+*.exe
+*.test
+*.out
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# Prisma / DB
+*.db
+*.sqlite
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Generated
+/contract/*.generated.ts
