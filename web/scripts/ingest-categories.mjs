@@ -17,7 +17,7 @@ const CATEGORIES = [
   ["Fish", "Fish"],
   ["Food", "Food"],
   ["Potions", "Potions"],
-  ["Herbs", "Herblore herbs"],
+  ["Herbs", "Herbs"],
   ["Seeds", "Seeds"],
   ["Logs", "Logs"],
   ["Ores", "Ores"],
