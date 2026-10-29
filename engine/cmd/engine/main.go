@@ -54,6 +54,7 @@ func main() {
 			checker := alerts.NewChecker(
 				database, board,
 				os.Getenv("DISCORD_WEBHOOK_URL"),
+				envOr("SITE_URL", "https://osrstracker.site"),
 				envDuration("ALERT_INTERVAL", 60*time.Second),
 				envDuration("ALERT_COOLDOWN", 30*time.Minute),
 			)
