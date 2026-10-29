@@ -15,8 +15,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/osrstracker/engine/internal/alerts"
 	"github.com/osrstracker/engine/internal/api"
 	"github.com/osrstracker/engine/internal/cache"
+	"github.com/osrstracker/engine/internal/db"
 	"github.com/osrstracker/engine/internal/poller"
 	"github.com/osrstracker/engine/internal/source"
 )
@@ -41,6 +43,25 @@ func main() {
 	// Background: refresh the board from the Wiki on an interval.
 	p := poller.New(src, board, interval)
 	go p.Run(ctx)
+
+	// Background: alert checker (only when a database is configured).
+	if dsn := os.Getenv("DATABASE_URL"); dsn != "" {
+		database, err := db.Connect(ctx, dsn)
+		if err != nil {
+			log.Printf("alerts: db connect failed, checker disabled: %v", err)
+		} else {
+			defer database.Close()
+			checker := alerts.NewChecker(
+				database, board,
+				os.Getenv("DISCORD_WEBHOOK_URL"),
+				envDuration("ALERT_INTERVAL", 60*time.Second),
+				envDuration("ALERT_COOLDOWN", 30*time.Minute),
+			)
+			go checker.Run(ctx)
+		}
+	} else {
+		log.Println("alerts: DATABASE_URL not set, checker disabled")
+	}
 
 	// Foreground: serve HTTP.
 	go func() {
