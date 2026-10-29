@@ -6,15 +6,24 @@ import { isLowLiquidity } from "@/lib/liquidity";
 
 type SortKey = "margin" | "roi" | "profitLimit" | "hourlyVolume";
 
-const COLUMNS: { key: SortKey; label: string }[] = [
+const COLUMNS: { key: SortKey; label: string; opt?: boolean }[] = [
   { key: "margin", label: "Margin" },
   { key: "roi", label: "ROI" },
-  { key: "profitLimit", label: "Profit / limit" },
+  { key: "profitLimit", label: "Profit / limit", opt: true },
   { key: "hourlyVolume", label: "Vol / h" },
 ];
 
 const MAX_ROWS = 100;
 const fmt = (n: number) => n.toLocaleString("en-US");
+// compact gp so wide columns (21,761,339) become narrow (21.76m)
+const gp = (n: number) => {
+  const a = Math.abs(n);
+  const s = n < 0 ? "−" : "";
+  if (a >= 1e9) return s + (a / 1e9).toFixed(2) + "b";
+  if (a >= 1e6) return s + (a / 1e6).toFixed(2) + "m";
+  if (a >= 1e3) return s + (a / 1e3).toFixed(1) + "k";
+  return s + a;
+};
 
 export default function FlipBoard({
   rows,
@@ -143,19 +152,19 @@ export default function FlipBoard({
               <th className="left">Item</th>
               <th>Buy</th>
               <th>Sell</th>
-              <th>Tax</th>
+              <th className="col-opt">Tax</th>
               {COLUMNS.map((c) => (
                 <th
                   key={c.key}
                   onClick={() => setSortKey(c.key)}
-                  className={"sortable" + (sortKey === c.key ? " active" : "")}
+                  className={"sortable" + (sortKey === c.key ? " active" : "") + (c.opt ? " col-opt" : "")}
                   aria-sort={sortKey === c.key ? "descending" : "none"}
                   title={`Sort by ${c.label}`}
                 >
                   {c.label} {sortKey === c.key ? "▼" : ""}
                 </th>
               ))}
-              <th>Limit</th>
+              <th className="col-opt">Limit</th>
             </tr>
           </thead>
           <tbody>
@@ -179,19 +188,19 @@ export default function FlipBoard({
                     <a href={`/item/${r.itemId}`}>{r.name}</a>
                     {r.members ? <span className="mtag" title="Members only">P</span> : null}
                   </td>
-                  <td className="tnum">{fmt(r.buy)}</td>
-                  <td className="tnum">{fmt(r.sell)}</td>
-                  <td className="tnum" style={{ color: "var(--faint)" }}>{fmt(r.tax)}</td>
-                  <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")}>{fmt(r.margin)}</td>
+                  <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>
+                  <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>
+                  <td className="tnum col-opt" style={{ color: "var(--faint)" }} title={fmt(r.tax)}>{gp(r.tax)}</td>
+                  <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")} title={fmt(r.margin)}>{gp(r.margin)}</td>
                   <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
-                  <td className="tnum">{fmt(r.profitLimit)}</td>
-                  <td className="tnum">
+                  <td className="tnum col-opt" title={fmt(r.profitLimit)}>{gp(r.profitLimit)}</td>
+                  <td className="tnum" title={fmt(r.hourlyVolume)}>
                     {thin && (
                       <span className="thin-flag" title="Low volume — this margin may be stale and hard to fill">⚠ </span>
                     )}
-                    {fmt(r.hourlyVolume)}
+                    {gp(r.hourlyVolume)}
                   </td>
-                  <td className="tnum">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
+                  <td className="tnum col-opt">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
                 </tr>
               );
             })}

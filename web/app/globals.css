@@ -255,3 +255,10 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
   .feature-item { grid-template-columns: 1.6rem 1fr; }
   .feature-item .fi-tag, .feature-item .fi-free { grid-column: 2; justify-self: start; margin-top: 0.4rem; }
 }
+
+/* narrow screens: drop secondary board columns and tighten so it fits */
+@media (max-width: 760px) {
+  table.board .col-opt { display: none; }
+  table.board th, table.board td { padding: 0.5rem 0.55rem; }
+  table.board { font-size: 0.86rem; }
+}
