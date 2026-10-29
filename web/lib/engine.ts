@@ -21,22 +21,57 @@ export interface BoardResponse {
   rows: Row[];
 }
 
+export interface TimeseriesPoint {
+  timestamp: number;
+  avgHighPrice: number;
+  avgLowPrice: number;
+  highPriceVolume: number;
+  lowPriceVolume: number;
+}
+
+export interface TimeseriesResponse {
+  id: number;
+  timestep: string;
+  points: TimeseriesPoint[];
+}
+
+export const TIMESTEPS = ["5m", "1h", "6h", "24h"] as const;
+export type Timestep = (typeof TIMESTEPS)[number];
+
+/** Live board, uncached — for the board page. */
 export async function getBoard(): Promise<BoardResponse> {
-  const res = await fetch(`${ENGINE_URL}/board`, {
-    // Always fetch live; the engine already serves a cached, in-memory board.
-    cache: "no-store",
-  });
+  const res = await fetch(`${ENGINE_URL}/board`, { cache: "no-store" });
   if (!res.ok) throw new Error(`engine /board: ${res.status}`);
   return res.json() as Promise<BoardResponse>;
 }
 
-/** Top profitable, reasonably-liquid flips — for the landing hero. Cached 60s. */
-export async function getTopFlips(n = 6): Promise<Row[]> {
+/** Board cached 60s — for pages that only need a lookup (landing, item meta). */
+async function getBoardCached(): Promise<BoardResponse> {
   const res = await fetch(`${ENGINE_URL}/board`, { next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`engine /board: ${res.status}`);
-  const data = (await res.json()) as BoardResponse;
+  return res.json() as Promise<BoardResponse>;
+}
+
+/** Top profitable, reasonably-liquid flips — for the landing hero. */
+export async function getTopFlips(n = 6): Promise<Row[]> {
+  const data = await getBoardCached();
   return data.rows
     .filter((r) => r.margin > 0 && r.hourlyVolume > 500)
     .sort((a, b) => b.margin - a.margin)
     .slice(0, n);
+}
+
+/** One item's current board row (name + prices), or null if not on the board. */
+export async function getBoardRow(id: number): Promise<Row | null> {
+  const data = await getBoardCached();
+  return data.rows.find((r) => r.itemId === id) ?? null;
+}
+
+/** Price history for one item. Cached 60s (the engine also caches). */
+export async function getTimeseries(id: number, timestep: Timestep): Promise<TimeseriesResponse> {
+  const res = await fetch(`${ENGINE_URL}/timeseries/${id}?timestep=${timestep}`, {
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) throw new Error(`engine /timeseries: ${res.status}`);
+  return res.json() as Promise<TimeseriesResponse>;
 }
