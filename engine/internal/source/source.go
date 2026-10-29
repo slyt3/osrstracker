@@ -10,9 +10,9 @@ type ItemID int
 
 // Price is a single buy/sell snapshot for one item from the /latest endpoint.
 type Price struct {
-	High     int64 `json:"high"`     // most recent insta-sell (buy) price
+	High     int64 `json:"high"`     // last instant-buy price (ask); you SELL ~here
 	HighTime int64 `json:"highTime"` // unix seconds
-	Low      int64 `json:"low"`      // most recent insta-buy (sell) price
+	Low      int64 `json:"low"`      // last instant-sell price (bid); you BUY ~here
 	LowTime  int64 `json:"lowTime"`  // unix seconds
 }
 

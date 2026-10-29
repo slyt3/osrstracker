@@ -13,9 +13,9 @@ import (
 // on 2025-05-29). These live here as data so the rules are testable and easy
 // to amend if Jagex changes them again.
 const (
-	TaxRate    = 0.02       // 2% of sale price
-	TaxMinSale = 50         // sales below 50 gp are not taxed at all
-	TaxCap     = 5_000_000  // tax is capped at 5m per item
+	TaxRate    = 0.02      // 2% of sale price
+	TaxMinSale = 50        // sales below 50 gp are not taxed at all
+	TaxCap     = 5_000_000 // tax is capped at 5m per item
 )
 
 // Tax returns the GE tax charged on a single-item sale at sellPrice, rounded
@@ -37,8 +37,8 @@ func Tax(sellPrice int64, exempt bool) int64 {
 type Row struct {
 	ItemID       source.ItemID `json:"itemId"`
 	Name         string        `json:"name"`
-	Buy          int64         `json:"buy"`          // instabuy (what you pay)
-	Sell         int64         `json:"sell"`         // instasell (what you receive)
+	Buy          int64         `json:"buy"`          // price you buy at (~the low/bid)
+	Sell         int64         `json:"sell"`         // price you sell at (~the high/ask)
 	Tax          int64         `json:"tax"`          // GE tax on the sale
 	Margin       int64         `json:"margin"`       // sell - buy - tax
 	ROI          float64       `json:"roi"`          // margin / buy
@@ -77,8 +77,8 @@ func Compute(
 		if !ok || p.High == 0 || p.Low == 0 {
 			continue
 		}
-		buy := p.High
-		sell := p.Low
+		buy := p.Low   // buy near the bid
+		sell := p.High // sell near the ask
 		tax := Tax(sell, exempt[m.ID])
 		margin := sell - buy - tax
 		var roi float64
