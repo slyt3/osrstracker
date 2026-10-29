@@ -17,7 +17,7 @@ func NewRouter(board *cache.Board, src source.PriceSource) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", handleHealth)
 	mux.HandleFunc("GET /board", handleBoard(board))
-	// TODO(M2): GET /timeseries/{id}
+	mux.HandleFunc("GET /timeseries/{id}", handleTimeseries(src, newTSCache()))
 	// TODO(M4): GET /live (websocket)
 	return mux
 }
