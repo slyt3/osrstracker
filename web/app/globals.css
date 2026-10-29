@@ -208,6 +208,10 @@ table.board td a:hover { color: var(--gold-2); }
 .jf-err { flex-basis: 100%; color: var(--red); font-size: 0.85rem; margin: 0.2rem 0 0; }
 .jf-ok { flex-basis: 100%; color: var(--green); font-size: 0.85rem; margin: 0.2rem 0 0; }
 
+/* members tag in craft table */
+.mtag { display: inline-block; font-size: 0.62rem; font-weight: 700; color: var(--gold); border: 1px solid var(--line-2);
+  border-radius: 4px; padding: 0 0.25rem; margin-left: 0.4rem; vertical-align: middle; }
+
 /* low-liquidity flag + warning note */
 .thin-flag { color: #e8933a; cursor: help; }
 table.board tbody tr.thin .left a { color: var(--muted); }

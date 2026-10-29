@@ -8,6 +8,7 @@ export default function SiteHeader() {
         <Link href="/" aria-label="OSRS Tracker home"><Wordmark /></Link>
         <nav className="nav">
           <Link className="link hide-sm" href="/board">Flip board</Link>
+          <Link className="link hide-sm" href="/craft">Craft</Link>
           <Link className="link hide-sm" href="/watchlist">Watchlist</Link>
           <Link className="link hide-sm" href="/journal">Journal</Link>
           <Link className="link hide-sm" href="/alerts">Alerts</Link>
