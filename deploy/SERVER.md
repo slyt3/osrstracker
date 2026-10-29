@@ -86,6 +86,19 @@ Env files (chmod 600, owned by `osrstracker`):
 `ALERT_INTERVAL`, `ALERT_COOLDOWN`) and `/home/osrstracker/web/.env`
 (`DATABASE_URL`, `ENGINE_URL=http://localhost:8080`).
 
+### Site access (HTTP Basic Auth)
+
+The whole site is behind nginx basic auth (it's private for now — all data is a
+single shared dev user until auth/M6). Credentials live in `/etc/nginx/.htpasswd`
+(hashed). The `/.well-known/acme-challenge/` path is excepted so Let's Encrypt
+renewal still works. Previous vhost saved as `osrstracker.site.pre-auth.bak`.
+
+- **Change the password:** `openssl passwd -apr1 '<newpass>'` → write
+  `osrs:<hash>` into `/etc/nginx/.htpasswd`, then `sudo systemctl reload nginx`
+  (or `sudo htpasswd /etc/nginx/.htpasswd osrs` if apache2-utils is installed).
+- **Remove the gate:** delete the `auth_basic` / `auth_basic_user_file` lines
+  from the 443 server block in `sites-available/osrstracker.site` and reload.
+
 ### Alerts (M4)
 
 The engine runs a background **alert checker** (enabled because `DATABASE_URL`
