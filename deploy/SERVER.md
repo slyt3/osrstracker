@@ -104,6 +104,7 @@ sudo systemctl restart osrstracker-engine
 cd /home/osrstracker/web
 npm ci
 npx prisma generate
+npx prisma migrate deploy   # apply any new migrations
 npm run build
 sudo systemctl restart osrstracker-web
 ```
@@ -113,9 +114,10 @@ sudo systemctl restart osrstracker-web
 
 ### Database schema
 
-Tables were created with `npx prisma db push` (no migration history yet).
-**TODO:** introduce a baseline Prisma migration and switch deploys to
-`prisma migrate deploy` before the schema carries real user data (M3+).
+Under Prisma migrations. The tables were originally created with `db push`,
+then the init migration was baselined (`prisma migrate resolve --applied
+20261029120000_init`), so the DB now tracks history. Apply future schema
+changes with `npx prisma migrate deploy` (part of the redeploy steps above).
 
 ## Other
 
