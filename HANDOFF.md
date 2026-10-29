@@ -182,9 +182,14 @@ the prices `/mapping`). Re-run after game updates:
 ```
 cd /home/osrstracker/web && set -a && . ./.env && set +a && node scripts/ingest-recipes.mjs
 ```
-Next step (not built): a **crafting-profit** page/endpoint — join recipe
-materials/output to live prices to show make-cost vs. sell (after tax) + volume.
-~2.5k outputs resolved to tradeable item ids; the rest are non-GE items.
+The **crafting-profit** page (`/craft`) joins recipes to live prices
+(cost vs. sell-after-tax + volume), via `web/lib/craft.ts`.
+
+`ItemCategory` table maps ~1k items to a primary category (Fish, Helmets, …),
+built by `scripts/ingest-categories.mjs` from the Wiki's category pages (edit the
+`CATEGORIES` list to add more). Powers the board's Category filter. Re-run:
+`npm run ingest:categories` (same env-sourcing as recipes). Note: OSRS's own GE
+API gives NO per-item categories (everything is "Default"), hence the Wiki source.
 
 ## Outstanding TODOs
 
