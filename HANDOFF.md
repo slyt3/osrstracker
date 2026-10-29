@@ -173,6 +173,19 @@ once. If a combined command is denied, split it into smaller steps.
 
 ---
 
+## Recipes (crafting data)
+
+`Recipe` + `RecipeMaterial` tables hold ~5.7k OSRS production recipes scraped
+from the Wiki's **`recipe` bucket** (`api.php?action=bucket`). Ingested by
+`web/scripts/ingest-recipes.mjs` (wipe-and-reload; resolves item names → ids via
+the prices `/mapping`). Re-run after game updates:
+```
+cd /home/osrstracker/web && set -a && . ./.env && set +a && node scripts/ingest-recipes.mjs
+```
+Next step (not built): a **crafting-profit** page/endpoint — join recipe
+materials/output to live prices to show make-cost vs. sell (after tax) + volume.
+~2.5k outputs resolved to tradeable item ids; the rest are non-GE items.
+
 ## Outstanding TODOs
 
 - Set `DISCORD_WEBHOOK_URL` to actually deliver alerts (user must provide URL).
