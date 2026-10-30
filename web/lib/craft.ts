@@ -15,7 +15,29 @@ export interface CraftRow {
   profit: number; // revenue - tax - cost
   outputVolume: number; // output traded /h — proxy for how many people make/use it
   minInputVolume: number; // scarcest input's /h
-  inputs: { itemId: number | null; name: string; qty: number }[];
+  inputs: { itemId: number | null; name: string; qty: number; buy: number }[]; // buy = current unit price
+  skills: { name: string; level: number }[]; // required skills + levels to make it
+}
+
+// Parse the wiki's raw skills array (shape varies) into {name, level}.
+function parseSkills(json: string | null): { name: string; level: number }[] {
+  if (!json) return [];
+  try {
+    const arr = JSON.parse(json);
+    if (!Array.isArray(arr)) return [];
+    const out: { name: string; level: number }[] = [];
+    for (const el of arr) {
+      if (el == null) continue;
+      if (typeof el === "string") { out.push({ name: el, level: 0 }); continue; }
+      if (Array.isArray(el)) { out.push({ name: String(el[0] ?? ""), level: Number(el[1]) || 0 }); continue; }
+      const name = el.name ?? el.skill ?? el.Skill ?? "";
+      const level = Number(el.level ?? el.lvl ?? el.Level ?? 0) || 0;
+      if (name) out.push({ name: String(name), level });
+    }
+    return out;
+  } catch {
+    return [];
+  }
 }
 
 // Joins recipes (DB) to live prices (engine board) and computes make-cost vs
@@ -67,7 +89,13 @@ export async function getCraftRows(): Promise<CraftRow[] | null> {
       profit: revenue - tax - cost,
       outputVolume: op.vol,
       minInputVolume: minVol === Infinity ? 0 : minVol,
-      inputs: rec.materials.map((m) => ({ itemId: m.itemId, name: m.name, qty: m.qty })),
+      inputs: rec.materials.map((m) => ({
+        itemId: m.itemId,
+        name: m.name,
+        qty: m.qty,
+        buy: (m.itemId != null ? price.get(m.itemId)?.buy : 0) ?? 0,
+      })),
+      skills: parseSkills(rec.skillsJson),
     });
   }
 

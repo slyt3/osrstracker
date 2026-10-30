@@ -392,11 +392,37 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
 .cr-ic { width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; flex: 0 0 auto; margin-top: 0.15rem; }
 .cr-make-body { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
 .cr-out { font-weight: 600; }
-.cr-recipe { display: flex; flex-wrap: wrap; gap: 0.35rem 0.45rem; max-width: 440px; white-space: normal; }
+.cr-recipe { display: flex; flex-wrap: wrap; gap: 0.35rem 0.45rem; max-width: 480px; white-space: normal; }
 .cr-ing { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.74rem; color: var(--muted);
   background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 0.1rem 0.42rem; white-space: nowrap; }
+a.cr-ing:hover { border-color: var(--gold); color: var(--text); }
 .cr-ing img { width: 16px; height: 16px; object-fit: contain; image-rendering: pixelated; }
 .cr-ing .q { color: var(--gold); font-family: var(--font-mono), monospace; }
+.cr-ing .px { color: var(--faint); font-family: var(--font-mono), monospace; }
+
+/* required-skill chips */
+.cr-levels { display: flex; flex-wrap: wrap; gap: 0.3rem; max-width: 220px; white-space: normal; }
+.cr-lv { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line-2); border-radius: 5px; padding: 0.05rem 0.4rem; white-space: nowrap; }
+.cr-lv.miss { color: var(--loss); border-color: rgba(255, 95, 86, 0.4); }
+
+/* f2p tag (companion to .mtag) */
+.ftag { display: inline-block; font-size: 0.6rem; font-weight: 700; color: var(--muted); border: 1px solid var(--line-2);
+  border-radius: 4px; padding: 0 0.3rem; margin-left: 0.4rem; vertical-align: middle; font-family: var(--font-mono), monospace; }
+
+/* blocked rows (over your level or bankroll) */
+table.board tbody tr.cant { opacity: 0.42; }
+
+/* "your setup" row */
+.craft-setup { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem 0.8rem; margin: 0 0 1rem;
+  padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+.craft-setup .cs-title { font-family: var(--font-mono), monospace; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); align-self: center; margin-right: 0.2rem; }
+.craft-setup label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--faint); font-weight: 600; font-family: var(--font-mono), monospace; }
+.craft-setup input[type="number"] { padding: 0.4rem 0.5rem; border: 1px solid var(--line-2); border-radius: var(--r-sm); background: var(--bg-2); color: var(--text); font-family: var(--font-mono), monospace; }
+.craft-setup .cs-gold input { width: 8rem; }
+.craft-setup .cs-lv input { width: 3.4rem; }
+.craft-setup .cs-chk { flex-direction: row; align-items: center; gap: 0.35rem; text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 0.82rem; color: var(--muted); font-family: var(--font-sans), sans-serif; cursor: pointer; }
+.craft-setup .cs-chk input { accent-color: var(--gold); width: 15px; height: 15px; }
+.craft-setup input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(255,194,74,0.22); }
 
 /* ---------- column visibility toggles ---------- */
 .col-toggles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.95rem; margin: 0 0 1rem; }
