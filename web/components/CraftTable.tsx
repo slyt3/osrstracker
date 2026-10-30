@@ -27,6 +27,7 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
   const [minVol, setMinVol] = useState<number>(0);
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
   const [method, setMethod] = useState("all");
+  const [skill, setSkill] = useState("all");
 
   const methodList = useMemo(
     () => Array.from(new Set(rows.map((r) => r.method).filter(Boolean))).sort(),
@@ -56,6 +57,7 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
         r.outputVolume >= minVol &&
         (members === "all" || (members === "p2p" ? r.members : !r.members)) &&
         (method === "all" || r.method === method) &&
+        (skill === "all" || r.skills.some((s) => s.name.toLowerCase() === skill.toLowerCase())) &&
         (q === "" || r.outputName.toLowerCase().includes(q)) &&
         (!onlyAfford || canAfford(r)) &&
         (!onlyMakeable || canMake(r)),
@@ -63,12 +65,19 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
     out.sort((a, b) => b[sortKey] - a[sortKey]);
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sortKey, query, minProfit, minVol, members, method, onlyAfford, onlyMakeable, gold, levels]);
+  }, [rows, sortKey, query, minProfit, minVol, members, method, skill, onlyAfford, onlyMakeable, gold, levels]);
 
   const shown = filtered.slice(0, MAX_ROWS);
 
   return (
     <div>
+      <div className="ff-tabs" role="tablist" aria-label="Skill">
+        {["all", ...SKILLS].map((s) => (
+          <button key={s} role="tab" aria-selected={skill === s} className={"ff-tab" + (skill === s ? " on" : "")} onClick={() => setSkill(s)}>
+            {s === "all" ? "All skills" : s}
+          </button>
+        ))}
+      </div>
       <div className="controls">
         <input type="search" placeholder="Search output…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Search output item" />
         <label>Min profit<input type="number" value={minProfit} step={1} onChange={(e) => setMinProfit(Number(e.target.value) || 0)} /></label>
