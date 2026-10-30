@@ -15,6 +15,10 @@ export interface Row {
   buyLimit: number;
   profitLimit: number;
   hourlyVolume: number;
+  highAlch: number;   // High Alchemy value (gp)
+  change1h: number;   // % change in sell price over ~1h
+  spike: boolean;     // sell price far from its recent norm
+  firstSeen: number;  // unix secs first observed; 0 if unknown
 }
 
 export interface BoardResponse {
