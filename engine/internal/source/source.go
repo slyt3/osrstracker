@@ -29,7 +29,8 @@ type Mapping struct {
 	ID       ItemID `json:"id"`
 	Name     string `json:"name"`
 	Members  bool   `json:"members"`
-	BuyLimit int64  `json:"limit"` // GE buy limit per 4h window; 0 if unknown
+	BuyLimit int64  `json:"limit"`    // GE buy limit per 4h window; 0 if unknown
+	HighAlch int64  `json:"highalch"` // High Alchemy value in gp; 0 if unknown
 }
 
 // TimeseriesPoint is one point of per-item price history from /timeseries.

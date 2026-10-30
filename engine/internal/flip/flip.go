@@ -46,6 +46,13 @@ type Row struct {
 	BuyLimit     int64         `json:"buyLimit"`     // GE 4h limit
 	ProfitLimit  int64         `json:"profitLimit"`  // margin * buyLimit
 	HourlyVolume int64         `json:"hourlyVolume"` // liquidity from /1h
+	HighAlch     int64         `json:"highAlch"`     // High Alchemy value (gp)
+
+	// Enriched by the poller from its rolling history (not part of the pure
+	// computation; zero until there is enough history).
+	Change1h  float64 `json:"change1h"`  // % change in sell price over ~1h
+	Spike     bool    `json:"spike"`     // sell price far from its recent norm
+	FirstSeen int64   `json:"firstSeen"` // unix secs first observed; 0 if unknown
 }
 
 // SortBy selects the board ranking.
@@ -98,6 +105,7 @@ func Compute(
 			BuyLimit:     m.BuyLimit,
 			ProfitLimit:  margin * m.BuyLimit,
 			HourlyVolume: volume[m.ID].HighVolume + volume[m.ID].LowVolume,
+			HighAlch:     m.HighAlch,
 		})
 	}
 	sortRows(rows, opts.SortBy)

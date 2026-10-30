@@ -7,6 +7,7 @@ package poller
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/osrstracker/engine/internal/cache"
@@ -32,16 +33,24 @@ type Poller struct {
 	// cached mapping, refreshed at most every mappingTTL
 	mapping     []source.Mapping
 	mappingSeen time.Time
+
+	// rolling price history + first-seen store for change/spike/new enrichment
+	trk *tracker
 }
 
 // New builds a poller. interval is how often prices are refreshed (~60s).
 func New(src source.PriceSource, board *cache.Board, interval time.Duration) *Poller {
+	path := os.Getenv("FIRST_SEEN_PATH")
+	if path == "" {
+		path = "firstseen.json"
+	}
 	return &Poller{
 		src:      src,
 		board:    board,
 		interval: interval,
 		sortBy:   flip.ByMargin,
 		exempt:   map[source.ItemID]bool{},
+		trk:      newTracker(path),
 	}
 }
 
@@ -80,6 +89,9 @@ func (p *Poller) pollOnce(ctx context.Context) error {
 		return err
 	}
 	rows := flip.Compute(latest, volume, p.mapping, p.exempt, flip.Options{SortBy: p.sortBy})
+	now := time.Now()
+	p.trk.update(rows, now)
+	p.trk.enrich(rows, now)
 	p.board.Set(rows)
 	log.Printf("poller: board updated (%d rows)", len(rows))
 	return nil
