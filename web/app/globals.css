@@ -451,6 +451,11 @@ table.board tbody tr.cant { opacity: 0.42; }
 .ff-tab:hover { color: var(--text); border-color: var(--faint); }
 .ff-tab.on { background: var(--gold); color: #251a04; border-color: var(--gold); }
 
+/* ---------- money makers kind badge ---------- */
+.mm-kind { display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; color: var(--muted);
+  border: 1px solid var(--line-2); border-radius: 5px; padding: 0.1rem 0.45rem; white-space: nowrap; }
+.mm-kind.flip { color: var(--gold); border-color: var(--gold-deep); }
+
 /* ---------- nav "More" dropdown ---------- */
 .nav-more { position: relative; display: inline-flex; }
 .nav-more-btn { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: 0; cursor: pointer;
