@@ -51,7 +51,13 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
   const [query, setQuery] = useState("");
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
   const [category, setCategory] = useState("all");
-  const [volDir, setVolDir] = useState<null | "asc" | "desc">(null); // manual Vol/h sort (overrides preset)
+  // manual column sort (overrides the preset ordering); null = use preset
+  type SKey = "name" | "buy" | "sell" | "margin" | "roi" | "change1h" | "hourlyVolume" | "buyLimit";
+  const [sort, setSort] = useState<{ key: SKey; dir: "asc" | "desc" } | null>(null);
+  const clickSort = (k: SKey) =>
+    setSort((s) => (s && s.key === k ? { key: k, dir: s.dir === "desc" ? "asc" : "desc" } : { key: k, dir: k === "name" ? "asc" : "desc" }));
+  const arrow = (k: SKey) => (sort?.key === k ? (sort.dir === "desc" ? " ▼" : " ▲") : "");
+  const thCls = (k: SKey, opt?: boolean) => "sortable" + (opt ? " col-opt" : "") + (sort?.key === k ? " active" : "");
   const [hideThin, setHideThin] = useState(false); // drop noisy sub-100/h items
 
   const categoryList = useMemo(() => Array.from(new Set(Object.values(categories))).sort(), [categories]);
@@ -84,10 +90,16 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
         (category === "all" || categories[r.itemId] === category) &&
         (terms.length === 0 || terms.every((t) => r.name.toLowerCase().includes(t))),
     );
-    if (volDir) out.sort((a, b) => (volDir === "desc" ? b.hourlyVolume - a.hourlyVolume : a.hourlyVolume - b.hourlyVolume));
-    else out.sort(active.sort);
+    if (sort) {
+      const { key, dir } = sort;
+      out.sort((a, b) =>
+        key === "name"
+          ? (dir === "desc" ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name))
+          : (dir === "desc" ? b[key] - a[key] : a[key] - b[key]),
+      );
+    } else out.sort(active.sort);
     return out.slice(0, MAX_ROWS);
-  }, [rows, active, query, members, category, categories, volDir, hideThin]);
+  }, [rows, active, query, members, category, categories, sort, hideThin]);
 
   return (
     <div>
@@ -98,7 +110,7 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
             role="tab"
             aria-selected={preset === p.id}
             className={"ff-tab" + (preset === p.id ? " on" : "")}
-            onClick={() => { setPreset(p.id); setVolDir(null); }}
+            onClick={() => { setPreset(p.id); setSort(null); }}
             title={p.hint}
           >
             {p.label}
@@ -144,18 +156,14 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
         <table className="board">
           <thead>
             <tr>
-              <th className="left">Item</th>
-              {cols.buy && <th>Buy</th>}
-              {cols.sell && <th>Sell</th>}
-              <th>Margin</th>
-              {cols.roi && <th>ROI</th>}
-              {cols.chg && <th title="Price change over the last hour">Chg 1h</th>}
-              {cols.vol && (
-                <th className={"sortable" + (volDir ? " active" : "")} onClick={() => setVolDir((d) => (d === "desc" ? "asc" : "desc"))} title="Click to sort by volume (high/low)">
-                  Vol/h {volDir === "desc" ? "▼" : volDir === "asc" ? "▲" : ""}
-                </th>
-              )}
-              {cols.limit && <th className="col-opt">Limit</th>}
+              <th className={"left sortable" + (sort?.key === "name" ? " active" : "")} onClick={() => clickSort("name")}>Item{arrow("name")}</th>
+              {cols.buy && <th className={thCls("buy")} onClick={() => clickSort("buy")}>Buy{arrow("buy")}</th>}
+              {cols.sell && <th className={thCls("sell")} onClick={() => clickSort("sell")}>Sell{arrow("sell")}</th>}
+              <th className={thCls("margin")} onClick={() => clickSort("margin")}>Margin{arrow("margin")}</th>
+              {cols.roi && <th className={thCls("roi")} onClick={() => clickSort("roi")}>ROI{arrow("roi")}</th>}
+              {cols.chg && <th className={thCls("change1h")} onClick={() => clickSort("change1h")} title="Price change over the last hour">Chg 1h{arrow("change1h")}</th>}
+              {cols.vol && <th className={thCls("hourlyVolume")} onClick={() => clickSort("hourlyVolume")} title="Click to sort by volume">Vol/h{arrow("hourlyVolume")}</th>}
+              {cols.limit && <th className={thCls("buyLimit", true)} onClick={() => clickSort("buyLimit")}>Limit{arrow("buyLimit")}</th>}
             </tr>
           </thead>
           <tbody>
