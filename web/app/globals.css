@@ -398,6 +398,14 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
 .cr-ing img { width: 16px; height: 16px; object-fit: contain; image-rendering: pixelated; }
 .cr-ing .q { color: var(--gold); font-family: var(--font-mono), monospace; }
 
+/* ---------- flip finder preset tabs ---------- */
+.ff-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.4rem 0 1.3rem; }
+.ff-tab { font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer;
+  padding: 0.42rem 0.9rem; border-radius: 999px; border: 1px solid var(--line-2);
+  background: var(--panel); color: var(--muted); transition: color 0.14s, border-color 0.14s, background 0.14s; }
+.ff-tab:hover { color: var(--text); border-color: var(--faint); }
+.ff-tab.on { background: var(--gold); color: #251a04; border-color: var(--gold); }
+
 /* ---------- nav "More" dropdown ---------- */
 .nav-more { position: relative; display: inline-flex; }
 .nav-more-btn { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: 0; cursor: pointer;

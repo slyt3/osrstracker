@@ -8,7 +8,7 @@ export default function SiteHeader() {
       <div className="container bar">
         <Link href="/" aria-label="OSRS Tracker home"><Wordmark /></Link>
         <nav className="nav">
-          <Link className="link hide-sm" href="/board">Board</Link>
+          <Link className="link hide-sm" href="/flip-finder">Flip finder</Link>
           <Link className="link hide-sm" href="/market">Market</Link>
           <Link className="link hide-sm" href="/deals">Deals</Link>
           <Link className="link hide-sm" href="/calculators">Calculators</Link>
