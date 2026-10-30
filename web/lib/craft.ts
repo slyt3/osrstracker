@@ -13,9 +13,9 @@ export interface CraftRow {
   revenue: number; // sell output (at the ask)
   tax: number; // GE tax on the sale
   profit: number; // revenue - tax - cost
-  outputVolume: number; // output traded /h
+  outputVolume: number; // output traded /h — proxy for how many people make/use it
   minInputVolume: number; // scarcest input's /h
-  inputs: { name: string; qty: number }[];
+  inputs: { itemId: number | null; name: string; qty: number }[];
 }
 
 // Joins recipes (DB) to live prices (engine board) and computes make-cost vs
@@ -67,7 +67,7 @@ export async function getCraftRows(): Promise<CraftRow[] | null> {
       profit: revenue - tax - cost,
       outputVolume: op.vol,
       minInputVolume: minVol === Infinity ? 0 : minVol,
-      inputs: rec.materials.map((m) => ({ name: m.name, qty: m.qty })),
+      inputs: rec.materials.map((m) => ({ itemId: m.itemId, name: m.name, qty: m.qty })),
     });
   }
 

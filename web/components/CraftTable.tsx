@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { CraftRow } from "@/lib/craft";
 
 const MAX_ROWS = 150;
+const icon = (id: number) => `https://static.runelite.net/cache/item/icon/${id}.png`;
 const fmt = (n: number) => Math.round(n).toLocaleString("en-US");
 const signed = (n: number) => (n >= 0 ? "+" : "−") + fmt(Math.abs(n));
 
@@ -53,28 +54,46 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
         <table className="board">
           <thead>
             <tr>
-              <th className="left">Make</th>
-              <th className="left">Method</th>
+              <th className="left">Make &amp; recipe</th>
+              <th className="left col-opt">Method</th>
               <th>Cost</th>
               <th>Sell (net)</th>
               <th className={"sortable" + (sortKey === "profit" ? " active" : "")} onClick={() => setSortKey("profit")}>Profit {sortKey === "profit" ? "▼" : ""}</th>
-              <th className={"sortable" + (sortKey === "outputVolume" ? " active" : "")} onClick={() => setSortKey("outputVolume")}>Out vol/h {sortKey === "outputVolume" ? "▼" : ""}</th>
+              <th className={"sortable" + (sortKey === "outputVolume" ? " active" : "")} onClick={() => setSortKey("outputVolume")} title="Units of the output traded per hour — a proxy for how many players make this">Crafted /h {sortKey === "outputVolume" ? "▼" : ""}</th>
             </tr>
           </thead>
           <tbody>
             {shown.map((r) => {
-              const inputs = r.inputs.map((i) => `${i.qty}× ${i.name}`).join(", ");
               const makeLabel = r.outputQty > 1 ? `${r.outputQty}× ${r.outputName}` : r.outputName;
               return (
                 <tr key={r.recipeId}>
-                  <td className="left" title={`Inputs: ${inputs}`}>
-                    <a href={`/item/${r.outputItemId}`}>{makeLabel}</a>
-                    {r.members ? <span className="mtag" title="Members only"> P</span> : null}
+                  <td className="left">
+                    <span className="cr-make">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className="cr-ic" src={icon(r.outputItemId)} alt="" loading="lazy" width={28} height={28} />
+                      <span className="cr-make-body">
+                        <span className="cr-out">
+                          <a href={`/item/${r.outputItemId}`}>{makeLabel}</a>
+                          {r.members ? <span className="mtag" title="Members only">P</span> : null}
+                        </span>
+                        <span className="cr-recipe" aria-label="Recipe ingredients">
+                          {r.inputs.map((i, k) => (
+                            <span className="cr-ing" key={`${r.recipeId}-${k}`} title={`${i.qty}× ${i.name}`}>
+                              {i.itemId != null && (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img src={icon(i.itemId)} alt="" loading="lazy" width={16} height={16} />
+                              )}
+                              <span className="q">{i.qty}×</span> {i.name}
+                            </span>
+                          ))}
+                        </span>
+                      </span>
+                    </span>
                   </td>
-                  <td className="left" style={{ color: "var(--muted)" }}>{r.method || "—"}</td>
+                  <td className="left col-opt" style={{ color: "var(--muted)" }}>{r.method || "—"}</td>
                   <td className="tnum">{fmt(r.cost)}</td>
                   <td className="tnum">{fmt(r.revenue - r.tax)}</td>
-                  <td className={"tnum " + (r.profit >= 0 ? "pos" : "neg")}>{signed(r.profit)}</td>
+                  <td className={"tnum " + (r.profit >= 0 ? "pos lit" : "neg")}>{signed(r.profit)}</td>
                   <td className="tnum">{fmt(r.outputVolume)}</td>
                 </tr>
               );
