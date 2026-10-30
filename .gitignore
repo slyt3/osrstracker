@@ -34,3 +34,6 @@ Thumbs.db
 
 # Generated
 /contract/*.generated.ts
+
+# TypeScript incremental build cache
+*.tsbuildinfo
