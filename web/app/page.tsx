@@ -1,153 +1,179 @@
 import Link from "next/link";
-import { getTopFlips } from "@/lib/engine";
-import { Chart, Star, Coin, Bell, Scales, Book } from "@/components/Icons";
+import { getLandingFeed } from "@/lib/engine";
 
-// Static-ish marketing page, revalidated every 60s so the hero shows real
-// current flips. The live board lives at /board.
+// The landing IS the product: a live, time-stamped flip terminal pulling real
+// current numbers. Revalidated every 60s so the feed is never stale.
 export const revalidate = 60;
 
+// compact gp: 21,761,339 -> 21.76m. Matches the board's formatting.
 function gp(n: number): string {
   const a = Math.abs(n);
-  const s = n < 0 ? "−" : "+";
-  if (a >= 1e9) return `${s}${(a / 1e9).toFixed(1)}b`;
-  if (a >= 1e6) return `${s}${(a / 1e6).toFixed(1)}m`;
-  if (a >= 1e3) return `${s}${(a / 1e3).toFixed(1)}k`;
-  return `${s}${a}`;
+  const s = n < 0 ? "−" : "";
+  if (a >= 1e9) return s + (a / 1e9).toFixed(2) + "b";
+  if (a >= 1e6) return s + (a / 1e6).toFixed(2) + "m";
+  if (a >= 1e3) return s + (a / 1e3).toFixed(1) + "k";
+  return s + a;
 }
-
-const features = [
-  { icon: Chart, title: "Flip board", tier: "Free", body: "Every tradeable item ranked by profit — margin after tax, ROI and profit-per-limit. Sort and filter instantly." },
-  { icon: Star, title: "Price charts", tier: "Free", body: "Per-item price history, so you can read the trend before committing your gp." },
-  { icon: Coin, title: "Watchlist", tier: "Free", body: "Star the items you care about and keep them one glance away." },
-  { icon: Bell, title: "Alerts", tier: "Pro", body: "Get pinged when an item hits your target margin, price or ROI." },
-  { icon: Scales, title: "Capital allocator", tier: "Pro", body: "Tell it your bankroll; it tells you what to flip for the best return." },
-  { icon: Book, title: "Journal & P&L", tier: "Free", body: "Log real buys and sells and watch your profit add up over time." },
-];
+const vol = (n: number) =>
+  n >= 1e6 ? (n / 1e6).toFixed(1) + "m" : n >= 1e3 ? (n / 1e3).toFixed(1) + "k" : String(n);
 
 export default async function Landing() {
-  const top = await getTopFlips(6).catch(() => []);
+  const feed = await getLandingFeed(10).catch(() => null);
+  const rows = feed?.rows ?? [];
+  const updated = feed
+    ? new Date(feed.ts * 1000).toLocaleTimeString("en-GB", { hour12: false })
+    : null;
+  const total = feed?.total ?? 0;
 
   return (
     <main>
-      <section className="hero">
-        <div className="container hero-inner">
-          <div>
+      {/* ---- live terminal hero ---- */}
+      <section className="term">
+        <div className="container">
+          <div className="term-bar">
+            <span className="term-live">
+              <span className={"blip" + (feed ? "" : " off")} />
+              {feed ? "LIVE" : "OFFLINE"}
+            </span>
+            <span className="term-path">grand&nbsp;exchange / flip&nbsp;feed</span>
+            <span className="term-when">
+              {updated ? `updated ${updated}` : "reconnecting…"}
+              <span className="sep"> · </span>60s
+            </span>
+          </div>
+
+          <div className="term-lede">
             <h1>
-              Buy low, sell high,<br />
-              <span className="hl">keep the margin.</span>
+              Flips that survive <span className="hl">the 2% tax</span>.
             </h1>
-            <p className="lead">
-              The Grand Exchange flip board for Old School RuneScape. Every margin is
-              computed after the 2% GE tax — so the number you see is the number you keep.
+            <p>
+              Not a list of fat spreads that never fill. Every row below is live, already
+              nets the Grand Exchange tax, and is weighted by buy limit and real trade volume.
+              If a margin isn&apos;t actually yours to keep, it isn&apos;t here.
             </p>
             <div className="actions">
-              <Link className="btn btn-gold" href="/board">Open the flip board</Link>
-              <Link className="btn btn-ghost" href="/pricing">Pricing</Link>
-            </div>
-            <div className="facts">
-              <span><b>~4,500</b> items</span><span className="sep">·</span>
-              <span>refreshed every <b>60s</b></span><span className="sep">·</span>
-              <span>margins after the <b>2%</b> tax</span>
+              <Link className="btn btn-gold" href="/board">Open the full board →</Link>
+              <Link className="btn btn-ghost" href="/pricing">What it costs</Link>
             </div>
           </div>
 
-          {/* real current top flips */}
-          <div className="card ticker">
-            <div className="t-head">
-              <span><span className="dot" />Top flips, live</span>
-              <span>margin</span>
-            </div>
-            {top.length === 0 ? (
-              <div className="t-empty">Board is warming up — open it in a moment.</div>
-            ) : (
-              top.map((r) => (
-                <div className="t-row" key={r.itemId}>
-                  <span className="nm">{r.name}</span>
-                  <span className="mg pos">{gp(r.margin)}</span>
-                </div>
-              ))
-            )}
+          {/* real current top flips, dense */}
+          <div className="board-scroll term-board">
+            <table className="board">
+              <thead>
+                <tr>
+                  <th className="left">Item</th>
+                  <th>Buy</th>
+                  <th>Sell</th>
+                  <th>Tax</th>
+                  <th>Margin</th>
+                  <th>ROI</th>
+                  <th className="col-opt">Vol/h</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.length === 0 ? (
+                  <tr>
+                    <td className="left term-warming" colSpan={7}>
+                      Feed is warming up — the board populates within a minute of the engine starting.
+                    </td>
+                  </tr>
+                ) : (
+                  rows.map((r) => (
+                    <tr key={r.itemId}>
+                      <td className="left">
+                        <Link href={`/item/${r.itemId}`}>{r.name}</Link>
+                        {r.members ? <span className="mtag" title="Members only">P</span> : null}
+                      </td>
+                      <td className="tnum">{gp(r.buy)}</td>
+                      <td className="tnum">{gp(r.sell)}</td>
+                      <td className="tnum" style={{ color: "var(--faint)" }}>−{gp(r.tax)}</td>
+                      <td className="tnum pos">+{gp(r.margin)}</td>
+                      <td className="tnum">{(r.roi * 100).toFixed(1)}%</td>
+                      <td className="tnum col-opt">{vol(r.hourlyVolume)}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
+
+          <p className="term-foot">
+            Top {rows.length} by margin, right now · {total.toLocaleString("en-US")} items tracked ·
+            sourced from the OSRS Wiki real-time prices · no account needed to browse
+          </p>
         </div>
       </section>
 
-      <div className="container"><hr className="rule" /></div>
-
+      {/* ---- honest "what it is / isn't" — the anti-sales-pitch ---- */}
       <section>
         <div className="container">
           <div className="section-head">
-            <p className="eyebrow">What you get</p>
-            <h2>Built for merching, not grinding</h2>
-            <p>The board and charts are free. Pro adds the automation that saves you from refreshing prices all day.</p>
+            <p className="eyebrow">Straight answers</p>
+            <h2>What it does, and what it doesn&apos;t</h2>
           </div>
-          <div className="feature-list">
-            {features.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div className="feature-item" key={f.title}>
-                  <span className="fi-ico"><Icon width={20} height={20} /></span>
-                  <div>
-                    <h3>{f.title}</h3>
-                    <p>{f.body}</p>
-                  </div>
-                  {f.tier === "Pro" ? <span className="fi-tag">Pro</span> : <span className="fi-free">Free</span>}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div className="container">
-          <div className="section-head">
-            <p className="eyebrow">How it works</p>
-            <h2>From the GE to your bank</h2>
-          </div>
-          <div className="flow">
-            <div className="flow-item">
-              <h3>Poll the Grand Exchange</h3>
-              <p>Prices and trade volume straight from the OSRS Wiki real-time feed, every 60 seconds.</p>
+          <div className="honest">
+            <div className="hon-col does">
+              <h3>What it does</h3>
+              <ul>
+                <li>Ranks every tradeable item by margin, ROI or profit-per-buy-limit.</li>
+                <li>Subtracts the exact GE tax (2%, rounded down, 50gp floor, 5m cap) from every number.</li>
+                <li>Flags thin, low-volume items so a stale spread doesn&apos;t look like free gp.</li>
+                <li>Charts each item&apos;s price history, keeps a watchlist, and logs real P&amp;L.</li>
+                <li>Pings Discord when an item hits your target — if you want it to.</li>
+              </ul>
             </div>
-            <div className="flow-item">
-              <h3>Do the tax math</h3>
-              <p>Margins computed after the 2% GE tax — rounded down, capped at 5m, exemptions included.</p>
-            </div>
-            <div className="flow-item">
-              <h3>Flip the top row</h3>
-              <p>Rank by margin, ROI or profit-per-limit, filter for liquidity, and go make gp.</p>
+            <div className="hon-col doesnt">
+              <h3>What it doesn&apos;t</h3>
+              <ul>
+                <li>Promise profit. It shows the math; the flip is still yours to make.</li>
+                <li>Invent prices. Numbers are the Wiki real-time feed, refreshed every 60 seconds.</li>
+                <li>Auto-buy or touch your account. It reads public prices, nothing more.</li>
+                <li>Hide the catches. Low liquidity, buy limits and tax are shown, not buried.</li>
+                <li>Nag you to sign up. The board and charts are free and open.</li>
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
+      {/* ---- the tax math, shown not claimed ---- */}
       <section>
         <div className="container">
           <div className="panel tax">
             <div>
               <p className="eyebrow">The 2% everyone forgets</p>
-              <h2 style={{ fontSize: "clamp(1.4rem,2.6vw,1.9rem)" }}>Real profit is after tax</h2>
+              <h2 style={{ fontSize: "clamp(1.4rem,2.6vw,1.9rem)" }}>Here is the arithmetic</h2>
               <p style={{ color: "var(--muted)", margin: "0.7rem 0 0", maxWidth: "46ch" }}>
-                The GE takes 2% of every sale — rounded down, none under 50 gp, capped at 5,000,000
-                per item, with a fixed exempt list. It&apos;s in every number here.
+                The GE takes 2% of every sale — rounded down, nothing under 50 gp, capped at
+                5,000,000 per item, with a fixed exempt list. It&apos;s in every number on the
+                board. No asterisks.
               </p>
             </div>
             <div className="formula">
-              margin = sell − buy − <b>tax(sell)</b><br />
-              roi&nbsp;&nbsp;&nbsp;= margin ÷ buy<br />
-              /limit = margin × <b>buy limit</b>
+              margin = sell − buy − <b>tax(sell)</b>
+              <br />
+              roi&nbsp;&nbsp;&nbsp;= margin ÷ buy
+              <br />
+              /limit = margin × <b>buy&nbsp;limit</b>
             </div>
           </div>
         </div>
       </section>
 
+      {/* ---- terse close ---- */}
       <section>
-        <div className="container" style={{ borderTop: "1px solid var(--line)", paddingTop: "3rem" }}>
-          <h2 style={{ fontSize: "clamp(1.6rem,3.4vw,2.3rem)", maxWidth: "18ch" }}>
-            Find your next flip in <span className="hl">one click</span>.
+        <div
+          className="container"
+          style={{ borderTop: "1px solid var(--line)", paddingTop: "3rem" }}
+        >
+          <h2 style={{ fontSize: "clamp(1.6rem,3.4vw,2.3rem)", maxWidth: "20ch" }}>
+            Open the board and check the math yourself.
           </h2>
-          <p style={{ color: "var(--muted)", margin: "0.7rem 0 1.5rem" }}>No account needed to browse the board.</p>
-          <Link className="btn btn-gold" href="/board">Open the flip board</Link>
+          <p style={{ color: "var(--muted)", margin: "0.7rem 0 1.5rem" }}>
+            No signup, no card, no email. The numbers are live right now.
+          </p>
+          <Link className="btn btn-gold" href="/board">Open the flip board →</Link>
         </div>
       </section>
     </main>

@@ -62,6 +62,21 @@ export async function getTopFlips(n = 6): Promise<Row[]> {
     .slice(0, n);
 }
 
+/**
+ * Landing feed: the top liquid flips plus the feed timestamp and total item
+ * count, so the hero can render as a real, time-stamped market terminal.
+ */
+export async function getLandingFeed(
+  n = 10,
+): Promise<{ ts: number; total: number; rows: Row[] }> {
+  const data = await getBoardCached();
+  const rows = data.rows
+    .filter((r) => r.margin > 0 && r.hourlyVolume > 500)
+    .sort((a, b) => b.margin - a.margin)
+    .slice(0, n);
+  return { ts: data.ts, total: data.rows.length, rows };
+}
+
 /** One item's current board row (name + prices), or null if not on the board. */
 export async function getBoardRow(id: number): Promise<Row | null> {
   const data = await getBoardCached();
