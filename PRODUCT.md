@@ -67,13 +67,17 @@ about liquidity where competitors show gross spreads that never fill.
 - Hard constraint from the owner: **must not read as generic AI-generated
   design** — no purple gradients, no identical grey-shadow card grids, no
   all-caps eyebrow on every heading, no fade-up-everything motion.
-- **Corrected preference (owner feedback, overrides earlier notes):** the owner
-  read warm/fantasy palettes — wood, parchment, carved stone, coin-gold, glow —
-  as "AI slop" and rejected them. The identity is **modern, cool and flat**:
-  "Graphite & Signal" — a cool graphite ground, near-white type, hairline
-  structure, and one flat signal accent (green = gain, red = loss). No gold, no
-  glow, no bevels, no gradient-as-decoration. OSRS affinity now lives in the
-  product's language and the green/red gains-signal, not in medieval dressing.
+- **Current direction (owner feedback, overrides earlier notes):** the owner
+  wants the **layout of GE-tracker-style flip trackers** (references:
+  ge-tracker.com, gemargin.com) — a dark market dashboard that leads with a
+  pitch, a live price **ticker**, and a ranked **"top flips" list with real OSRS
+  item icons**, then feature cards. Palette: **OSRS colours** = dark ground +
+  **coin-gold** accent + gains-green / loss-red (as the reference sites use).
+  "Cool design" with tasteful **OSRS SVG animation** (e.g. animated coins).
+  Earlier warm-everything themes (parchment/stone) and the flat Graphite theme
+  were both superseded. (History: the owner rejected warm/glow themes as "AI
+  slop"; here gold is an accent on dark, reference-endorsed, not a warm field.)
+- Real OSRS item icons by item id: `https://static.runelite.net/cache/item/icon/<id>.png`.
 
 ## Evidence on Hand
 

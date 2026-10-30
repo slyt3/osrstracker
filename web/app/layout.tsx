@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Source_Serif_4, Instrument_Sans } from "next/font/google";
+import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import "./globals.css";
 
-// Organic: Source Serif 4 for medium-weight statements and headings;
-// Instrument Sans for reading and controls.
-const display = Source_Serif_4({ subsets: ["latin"], variable: "--font-display", display: "swap" });
-const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+// GE-tracker data world: Hanken Grotesk carries UI/body/display (weight does
+// the hierarchy); JetBrains Mono sets the tabular gp figures.
+const sans = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: "OSRS Tracker — live Grand Exchange flips",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${display.variable}`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
         <SiteHeader />
         {children}
