@@ -7,6 +7,8 @@ const LINKS = [
   { href: "/money", label: "Money makers" },
   { href: "/allocator", label: "Capital allocator" },
   { href: "/holdings", label: "Holdings" },
+  { href: "/magic", label: "Magic conversions" },
+  { href: "/new", label: "New items" },
   { href: "/board", label: "Full board" },
   { href: "/items", label: "Items" },
   { href: "/craft", label: "Craft" },
