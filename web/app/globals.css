@@ -456,6 +456,24 @@ table.board tbody tr.cant { opacity: 0.42; }
   border: 1px solid var(--line-2); border-radius: 5px; padding: 0.1rem 0.45rem; white-space: nowrap; }
 .mm-kind.flip { color: var(--gold); border-color: var(--gold-deep); }
 
+/* ---------- cookie consent (centered modal + blurred backdrop) ---------- */
+.cc-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  background: rgba(8, 10, 13, 0.55);
+  backdrop-filter: blur(9px) saturate(0.9);
+  -webkit-backdrop-filter: blur(9px) saturate(0.9);
+}
+.cc-modal {
+  width: 100%; max-width: 460px; background: var(--panel);
+  border: 1px solid var(--line-2); border-radius: var(--r);
+  padding: 1.8rem 1.8rem 1.6rem; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+}
+.cc-modal h2 { font-size: 1.35rem; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
+.cc-modal p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; margin: 0 0 1.4rem; }
+.cc-actions { display: flex; gap: 0.7rem; }
+.cc-actions .btn { flex: 1; justify-content: center; }
+
 /* ---------- nav "More" dropdown ---------- */
 .nav-more { position: relative; display: inline-flex; }
 .nav-more-btn { display: inline-flex; align-items: center; gap: 0.3rem; background: none; border: 0; cursor: pointer;
