@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getBoardRow, getTimeseries, TIMESTEPS, type Timestep } from "@/lib/engine";
 import PriceChart from "@/components/PriceChart";
+import Backtest from "@/components/Backtest";
 import ItemRecipes from "@/components/ItemRecipes";
 import { getCraftRowsForItem } from "@/lib/craft";
 import { isLowLiquidity, LOW_VOLUME } from "@/lib/liquidity";
@@ -87,6 +88,8 @@ export default async function ItemPage({
             <p className="notice">Price history is unavailable right now. Try another range or come back shortly.</p>
           )}
         </div>
+
+        {series && series.points.length > 1 && <Backtest points={series.points} />}
       </div>
     </main>
   );
