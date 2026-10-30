@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getLandingFeed } from "@/lib/engine";
-import { Chart, Star, Coin, Bell, Scales, Book } from "@/components/Icons";
+import { Chart, Star, Coin, Scales, Book } from "@/components/Icons";
 
 // GE-tracker-style data landing: hero + live ticker + ranked top flips with
 // real OSRS item icons + feature grid. Real current numbers, revalidated 60s.
@@ -20,7 +20,6 @@ const FEATURES = [
   { Icon: Chart, title: "Flip board", tier: "Free", body: "Every item ranked by margin, ROI and profit-per-limit — all after the 2% tax." },
   { Icon: Star, title: "Price charts", tier: "Free", body: "Per-item history so you read the trend before committing gp." },
   { Icon: Coin, title: "Watchlist", tier: "Free", body: "Star the items you care about and keep them one glance away." },
-  { Icon: Bell, title: "Alerts", tier: "Pro", body: "Get pinged on Discord when an item hits your target margin or price." },
   { Icon: Scales, title: "Capital allocator", tier: "Pro", body: "Tell it your bankroll; it suggests what to flip for the best return." },
   { Icon: Book, title: "Journal & P&L", tier: "Free", body: "Log real buys and sells and watch your profit add up over time." },
 ];

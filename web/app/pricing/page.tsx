@@ -3,7 +3,7 @@ import { Check } from "@/components/Icons";
 
 export const metadata = {
   title: "Pricing — OSRS Tracker",
-  description: "Free core forever. Pro adds alerts, the capital allocator and full analytics.",
+  description: "Free core forever. Pro adds the capital allocator and full analytics.",
 };
 
 const free = [
@@ -15,7 +15,6 @@ const free = [
 
 const pro = [
   "Everything in Free",
-  "Alerts — email, Discord & push",
   "Capital allocator (flip for your bankroll)",
   "Unlimited watchlist",
   "Full P&L analytics & CSV export",

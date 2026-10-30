@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getBoardRow, getTimeseries, TIMESTEPS, type Timestep } from "@/lib/engine";
 import PriceChart from "@/components/PriceChart";
-import AlertForm from "@/components/AlertForm";
 import { isLowLiquidity, LOW_VOLUME } from "@/lib/liquidity";
 
 export const revalidate = 60;
@@ -84,9 +83,6 @@ export default async function ItemPage({
             <p className="notice">Price history is unavailable right now. Try another range or come back shortly.</p>
           )}
         </div>
-
-        <p className="eyebrow" style={{ margin: "2rem 0 0.8rem" }}>Set an alert</p>
-        <AlertForm itemId={id} />
       </div>
     </main>
   );
