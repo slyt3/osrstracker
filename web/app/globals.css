@@ -395,7 +395,7 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
 .cr-ic { width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; flex: 0 0 auto; margin-top: 0.15rem; }
 .cr-make-body { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
 .cr-out { font-weight: 600; }
-.cr-recipe { display: flex; flex-wrap: wrap; gap: 0.35rem 0.45rem; max-width: 480px; white-space: normal; }
+.cr-recipe { display: flex; flex-wrap: wrap; gap: 0.3rem 0.4rem; max-width: 300px; white-space: normal; }
 .cr-ing { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.74rem; color: var(--muted);
   background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 0.1rem 0.42rem; white-space: nowrap; }
 a.cr-ing:hover { border-color: var(--gold); color: var(--text); }
@@ -404,7 +404,7 @@ a.cr-ing:hover { border-color: var(--gold); color: var(--text); }
 .cr-ing .px { color: var(--faint); font-family: var(--font-mono), monospace; }
 
 /* required-skill chips */
-.cr-levels { display: flex; flex-wrap: wrap; gap: 0.3rem; max-width: 220px; white-space: normal; }
+.cr-levels { display: flex; flex-wrap: wrap; gap: 0.3rem; max-width: 150px; white-space: normal; }
 .cr-lv { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line-2); border-radius: 5px; padding: 0.05rem 0.4rem; white-space: nowrap; }
 .cr-lv.miss { color: var(--loss); border-color: rgba(255, 95, 86, 0.4); }
 

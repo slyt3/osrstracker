@@ -148,8 +148,8 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
                             i.itemId != null ? (
                               <a className="cr-ing" key={k} href={`/item/${i.itemId}`} title={`${i.qty}× ${i.name} — ${fmt(i.qty * i.buy)} gp now`}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={icon(i.itemId)} alt="" loading="lazy" width={16} height={16} />
-                                <span className="q">{i.qty}×</span> {i.name} <span className="px">{gp(i.qty * i.buy)}</span>
+                                <img src={icon(i.itemId)} alt={i.name} loading="lazy" width={16} height={16} />
+                                <span className="q">{i.qty}×</span> <span className="px">{gp(i.qty * i.buy)}</span>
                               </a>
                             ) : (
                               <span className="cr-ing" key={k}><span className="q">{i.qty}×</span> {i.name}</span>
