@@ -101,6 +101,7 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
               <th>Sell (net)</th>
               <th className={"sortable" + (sortKey === "profit" ? " active" : "")} onClick={() => setSortKey("profit")}>Profit {sortKey === "profit" ? "▼" : ""}</th>
               <th className={"sortable" + (sortKey === "outputVolume" ? " active" : "")} onClick={() => setSortKey("outputVolume")} title="Units of the output traded per hour — how many players make/sell this">Sold /h {sortKey === "outputVolume" ? "▼" : ""}</th>
+              <th className="col-opt" title="Slowest ingredient to buy per hour — how fast you can actually source the materials">Inputs /h</th>
             </tr>
           </thead>
           <tbody>
@@ -150,6 +151,7 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
                   <td className="tnum">{fmt(r.revenue - r.tax)}</td>
                   <td className={"tnum " + (r.profit >= 0 ? "pos lit" : "neg")}>{signed(r.profit)}</td>
                   <td className="tnum">{fmt(r.outputVolume)}</td>
+                  <td className="tnum col-opt">{fmt(r.minInputVolume)}</td>
                 </tr>
               );
             })}

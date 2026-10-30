@@ -41,6 +41,7 @@ export default function ItemRecipes({ rows }: { rows: CraftRow[] }) {
               <span>Sell after tax <b className="tnum">{fmt(r.revenue - r.tax)}</b></span>
               <span>Profit <b className={"tnum " + (r.profit >= 0 ? "pos lit" : "neg")}>{signed(r.profit)}</b></span>
               <span>Sold / h <b className="tnum">{fmt(r.outputVolume)}</b></span>
+              <span>Inputs / h <b className="tnum">{fmt(r.minInputVolume)}</b></span>
             </div>
           </div>
         ))}

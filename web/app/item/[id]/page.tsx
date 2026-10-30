@@ -62,6 +62,8 @@ export default async function ItemPage({
           </div>
         )}
 
+        <ItemRecipes rows={recipes} />
+
         {row && isLowLiquidity(row) && (
           <div className="warn-note">
             <strong>⚠ Low volume ({row.hourlyVolume.toLocaleString("en-US")}/h).</strong> This item
@@ -86,8 +88,6 @@ export default async function ItemPage({
             <p className="notice">Price history is unavailable right now. Try another range or come back shortly.</p>
           )}
         </div>
-
-        <ItemRecipes rows={recipes} />
       </div>
     </main>
   );
