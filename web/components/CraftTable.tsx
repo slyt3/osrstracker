@@ -26,6 +26,12 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
   const [minProfit, setMinProfit] = useState<number>(1);
   const [minVol, setMinVol] = useState<number>(0);
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
+  const [method, setMethod] = useState("all");
+
+  const methodList = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.method).filter(Boolean))).sort(),
+    [rows],
+  );
 
   // "your setup": bankroll + skill levels + the two gates
   const [gold, setGold] = useState<number>(0);
@@ -49,6 +55,7 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
         r.profit >= minProfit &&
         r.outputVolume >= minVol &&
         (members === "all" || (members === "p2p" ? r.members : !r.members)) &&
+        (method === "all" || r.method === method) &&
         (q === "" || r.outputName.toLowerCase().includes(q)) &&
         (!onlyAfford || canAfford(r)) &&
         (!onlyMakeable || canMake(r)),
@@ -56,7 +63,7 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
     out.sort((a, b) => b[sortKey] - a[sortKey]);
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sortKey, query, minProfit, minVol, members, onlyAfford, onlyMakeable, gold, levels]);
+  }, [rows, sortKey, query, minProfit, minVol, members, method, onlyAfford, onlyMakeable, gold, levels]);
 
   const shown = filtered.slice(0, MAX_ROWS);
 
@@ -73,6 +80,14 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
             <option value="f2p">F2P</option>
           </select>
         </label>
+        {methodList.length > 0 && (
+          <label>Method
+            <select value={method} onChange={(e) => setMethod(e.target.value)}>
+              <option value="all">All methods</option>
+              {methodList.map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </label>
+        )}
       </div>
 
       <div className="craft-setup">
