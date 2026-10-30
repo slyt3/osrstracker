@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Row } from "@/lib/engine";
 import { isLowLiquidity } from "@/lib/liquidity";
 
-type SortKey = "margin" | "roi" | "profitLimit" | "hourlyVolume";
+type SortKey = "buy" | "sell" | "tax" | "margin" | "roi" | "profitLimit" | "hourlyVolume" | "buyLimit";
 
 type ColKey = "buy" | "sell" | "tax" | "roi" | "profitLimit" | "vol" | "limit";
 const COLTOG: { key: ColKey; label: string }[] = [
@@ -15,13 +15,6 @@ const COLTOG: { key: ColKey; label: string }[] = [
   { key: "profitLimit", label: "Profit/limit" },
   { key: "vol", label: "Vol/h" },
   { key: "limit", label: "Limit" },
-];
-
-const COLUMNS: { key: SortKey; label: string; opt?: boolean }[] = [
-  { key: "margin", label: "Margin" },
-  { key: "roi", label: "ROI" },
-  { key: "profitLimit", label: "Profit / limit", opt: true },
-  { key: "hourlyVolume", label: "Vol / h" },
 ];
 
 const MAX_ROWS = 100;
@@ -49,6 +42,13 @@ export default function FlipBoard({
   categories?: Record<number, string>;
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("margin");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const clickSort = (k: SortKey) => {
+    if (k === sortKey) setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    else { setSortKey(k); setSortDir("desc"); }
+  };
+  const arrow = (k: SortKey) => (sortKey === k ? (sortDir === "desc" ? " ▼" : " ▲") : "");
+  const thCls = (k: SortKey, opt?: boolean) => "sortable" + (opt ? " col-opt" : "") + (sortKey === k ? " active" : "");
   const [query, setQuery] = useState("");
   const [minMargin, setMinMargin] = useState<number>(1); // hide non-profitable by default
   const [minVolume, setMinVolume] = useState<number>(100); // hide thin/junk items by default
@@ -72,7 +72,6 @@ export default function FlipBoard({
       return next;
     });
   }
-  const sortColVisible = (k: SortKey) => (k === "margin" ? true : k === "hourlyVolume" ? cols.vol : cols[k]);
 
   const categoryList = useMemo(
     () => Array.from(new Set(Object.values(categories))).sort(),
@@ -118,9 +117,9 @@ export default function FlipBoard({
         (category === "all" || categories[r.itemId] === category) &&
         (q === "" || r.name.toLowerCase().includes(q)),
     );
-    out.sort((a, b) => b[sortKey] - a[sortKey]);
+    out.sort((a, b) => (sortDir === "desc" ? b[sortKey] - a[sortKey] : a[sortKey] - b[sortKey]));
     return out;
-  }, [rows, sortKey, query, minMargin, minVolume, minRoi, members, category, categories]);
+  }, [rows, sortKey, sortDir, query, minMargin, minVolume, minRoi, members, category, categories]);
 
   const shown = filtered.slice(0, MAX_ROWS);
   const updated = ts ? new Date(ts * 1000).toLocaleTimeString() : "—";
@@ -188,21 +187,14 @@ export default function FlipBoard({
             <tr>
               <th aria-label="Watch" />
               <th className="left">Item</th>
-              {cols.buy && <th>Buy</th>}
-              {cols.sell && <th>Sell</th>}
-              {cols.tax && <th className="col-opt">Tax</th>}
-              {COLUMNS.filter((c) => sortColVisible(c.key)).map((c) => (
-                <th
-                  key={c.key}
-                  onClick={() => setSortKey(c.key)}
-                  className={"sortable" + (sortKey === c.key ? " active" : "") + (c.opt ? " col-opt" : "")}
-                  aria-sort={sortKey === c.key ? "descending" : "none"}
-                  title={`Sort by ${c.label}`}
-                >
-                  {c.label} {sortKey === c.key ? "▼" : ""}
-                </th>
-              ))}
-              {cols.limit && <th className="col-opt">Limit</th>}
+              {cols.buy && <th className={thCls("buy")} onClick={() => clickSort("buy")}>Buy{arrow("buy")}</th>}
+              {cols.sell && <th className={thCls("sell")} onClick={() => clickSort("sell")}>Sell{arrow("sell")}</th>}
+              {cols.tax && <th className={thCls("tax", true)} onClick={() => clickSort("tax")}>Tax{arrow("tax")}</th>}
+              <th className={thCls("margin")} onClick={() => clickSort("margin")}>Margin{arrow("margin")}</th>
+              {cols.roi && <th className={thCls("roi")} onClick={() => clickSort("roi")}>ROI{arrow("roi")}</th>}
+              {cols.profitLimit && <th className={thCls("profitLimit", true)} onClick={() => clickSort("profitLimit")}>Profit / limit{arrow("profitLimit")}</th>}
+              {cols.vol && <th className={thCls("hourlyVolume")} onClick={() => clickSort("hourlyVolume")}>Vol / h{arrow("hourlyVolume")}</th>}
+              {cols.limit && <th className={thCls("buyLimit", true)} onClick={() => clickSort("buyLimit")}>Limit{arrow("buyLimit")}</th>}
             </tr>
           </thead>
           <tbody>
