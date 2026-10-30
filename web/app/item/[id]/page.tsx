@@ -74,7 +74,8 @@ export default async function ItemPage({
         )}
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0 0 1rem", flexWrap: "wrap", gap: "0.8rem" }}>
-          <div className="ranges">
+          <div className="ranges" aria-label="Interval">
+            <span className="ranges-label">Interval</span>
             {TIMESTEPS.map((t) => (
               <Link key={t} href={`/item/${id}?range=${t}`} className={t === range ? "on" : ""}>{t}</Link>
             ))}
@@ -83,7 +84,7 @@ export default async function ItemPage({
 
         <div className="card" style={{ padding: "1.2rem" }}>
           {series && series.points.length > 0 ? (
-            <PriceChart points={series.points} />
+            <PriceChart points={series.points} hourlyVolume={row?.hourlyVolume} />
           ) : (
             <p className="notice">Price history is unavailable right now. Try another range or come back shortly.</p>
           )}

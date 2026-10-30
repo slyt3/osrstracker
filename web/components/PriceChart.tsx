@@ -3,65 +3,97 @@
 import { useRef, useState } from "react";
 import type { TimeseriesPoint } from "@/lib/engine";
 
-// Hand-rolled inline SVG chart — no charting dependency. Two lines (buy at the
-// bid, sell at the ask) over time, with a hover crosshair + tooltip.
+// Hand-rolled inline SVG chart — no charting dependency. Sell (ask) and buy
+// (bid) over time: breaks at gaps, optional median smoothing, volume-weighted
+// dots, round axes, and a full hover tooltip.
 
 const W = 820;
-const H = 340;
-const PAD = { top: 18, right: 18, bottom: 30, left: 66 };
+const H = 360;
+const PAD = { top: 18, right: 18, bottom: 34, left: 72 };
 
 const compact = (n: number) => {
   const a = Math.abs(n);
   if (a >= 1e9) return (n / 1e9).toFixed(2) + "b";
   if (a >= 1e6) return (n / 1e6).toFixed(2) + "m";
   if (a >= 1e3) return (n / 1e3).toFixed(1) + "k";
-  return String(n);
+  return String(Math.round(n));
 };
 const full = (n: number) => n.toLocaleString("en-US");
 
-export default function PriceChart({ points }: { points: TimeseriesPoint[] }) {
+// "nice" rounded numbers for axis ticks
+function niceNum(x: number, round: boolean): number {
+  if (x <= 0) return 1;
+  const exp = Math.floor(Math.log10(x));
+  const f = x / 10 ** exp;
+  const nf = round ? (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) : f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10;
+  return nf * 10 ** exp;
+}
+function niceTicks(min: number, max: number, count = 5) {
+  const range = niceNum(max - min || 1, false);
+  const step = niceNum(range / (count - 1), true);
+  const niceMin = Math.floor(min / step) * step;
+  const niceMax = Math.ceil(max / step) * step;
+  const ticks: number[] = [];
+  for (let v = niceMin; v <= niceMax + step * 0.5; v += step) ticks.push(v);
+  return { niceMin, niceMax, ticks };
+}
+
+// rolling median over a 3-bucket window, preserving nulls (gaps)
+function median3(arr: (number | null)[]): (number | null)[] {
+  return arr.map((v, i) => {
+    if (v == null) return null;
+    const w = [arr[i - 1], arr[i], arr[i + 1]].filter((x): x is number => x != null).sort((a, b) => a - b);
+    return w[Math.floor(w.length / 2)];
+  });
+}
+
+export default function PriceChart({ points, hourlyVolume }: { points: TimeseriesPoint[]; hourlyVolume?: number }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [hover, setHover] = useState<number | null>(null);
+  const lowVol = (hourlyVolume ?? Infinity) < 100;
+  const [smooth, setSmooth] = useState(lowVol);
 
-  // Usable points: need at least one of the two prices.
-  const pts = points.filter((p) => p.avgHighPrice > 0 || p.avgLowPrice > 0);
-  if (pts.length < 2) {
-    return <p className="notice">Not enough price history for this item yet.</p>;
-  }
+  const n = points.length;
+  if (n < 2) return <p className="notice">Not enough price history for this item yet.</p>;
 
-  const vals: number[] = [];
-  for (const p of pts) {
-    if (p.avgHighPrice > 0) vals.push(p.avgHighPrice);
-    if (p.avgLowPrice > 0) vals.push(p.avgLowPrice);
-  }
-  let min = Math.min(...vals);
-  let max = Math.max(...vals);
-  if (min === max) { min *= 0.99; max *= 1.01; }
-  const pad = (max - min) * 0.08;
-  min -= pad; max += pad;
+  // a side is plottable only when it has a price AND trades in that bucket (else gap)
+  const sellRaw = points.map((p) => (p.avgHighPrice > 0 && p.highPriceVolume > 0 ? p.avgHighPrice : null));
+  const buyRaw = points.map((p) => (p.avgLowPrice > 0 && p.lowPriceVolume > 0 ? p.avgLowPrice : null));
+  const vol = points.map((p) => (p.highPriceVolume || 0) + (p.lowPriceVolume || 0));
+  const maxVol = Math.max(1, ...vol);
+
+  const sell = smooth ? median3(sellRaw) : sellRaw;
+  const buy = smooth ? median3(buyRaw) : buyRaw;
+
+  const vals = [...sell, ...buy].filter((x): x is number => x != null);
+  if (vals.length < 2) return <p className="notice">Not enough price history for this item yet.</p>;
+  let dMin = Math.min(...vals);
+  let dMax = Math.max(...vals);
+  if (dMin === dMax) { dMin *= 0.99; dMax *= 1.01; }
+  const pad = (dMax - dMin) * 0.08; // small padding above & below
+  const { niceMin, niceMax, ticks } = niceTicks(dMin - pad, dMax + pad, 5);
+  dMin = niceMin; dMax = niceMax;
 
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
-  const x = (i: number) => PAD.left + (i / (pts.length - 1)) * plotW;
-  const y = (v: number) => PAD.top + (1 - (v - min) / (max - min)) * plotH;
+  const x = (i: number) => PAD.left + (i / (n - 1)) * plotW;
+  const y = (v: number) => PAD.top + (1 - (v - dMin) / (dMax - dMin)) * plotH;
 
-  const line = (key: "avgHighPrice" | "avgLowPrice") => {
+  const path = (arr: (number | null)[]) => {
     let d = "";
-    let started = false;
-    pts.forEach((p, i) => {
-      const v = p[key];
-      if (v > 0) {
-        d += `${started ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
-        started = true;
-      }
+    let pen = false;
+    arr.forEach((v, i) => {
+      if (v == null) { pen = false; return; }
+      d += `${pen ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)} `;
+      pen = true;
     });
     return d.trim();
   };
 
-  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => min + f * (max - min));
-  const xTickIdx = [0, Math.floor((pts.length - 1) / 2), pts.length - 1];
-  const fmtDate = (ts: number) =>
-    new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  // 6 evenly-spaced date labels
+  const labelCount = Math.min(6, n);
+  const xTickIdx = Array.from(new Set(Array.from({ length: labelCount }, (_, k) => Math.round((k * (n - 1)) / (labelCount - 1)))));
+  const fmtDate = (ts: number) => new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const fmtDateTime = (ts: number) =>
     new Date(ts * 1000).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
@@ -70,17 +102,27 @@ export default function PriceChart({ points }: { points: TimeseriesPoint[] }) {
     if (!svg) return;
     const rect = svg.getBoundingClientRect();
     const vbX = ((e.clientX - rect.left) / rect.width) * W;
-    const i = Math.round(((vbX - PAD.left) / plotW) * (pts.length - 1));
-    setHover(Math.max(0, Math.min(pts.length - 1, i)));
+    const i = Math.round(((vbX - PAD.left) / plotW) * (n - 1));
+    setHover(Math.max(0, Math.min(n - 1, i)));
   };
 
-  const hp = hover !== null ? pts[hover] : null;
+  const hp = hover !== null ? points[hover] : null;
+  const hSell = hp && hp.avgHighPrice > 0 ? hp.avgHighPrice : null;
+  const hBuy = hp && hp.avgLowPrice > 0 ? hp.avgLowPrice : null;
+  const dot = (v: number, i: number, color: string) => {
+    const r = 1.4 + 2.8 * (vol[i] / maxVol);
+    const o = 0.25 + 0.75 * (vol[i] / maxVol);
+    return <circle cx={x(i)} cy={y(v)} r={r} fill={color} opacity={o} />;
+  };
 
   return (
     <div style={{ position: "relative" }}>
       <div className="chart-legend">
         <span><i style={{ background: "var(--gold)" }} /> Sell (ask)</span>
         <span><i style={{ background: "var(--muted)" }} /> Buy (bid)</span>
+        <label className="chart-smooth">
+          <input type="checkbox" checked={smooth} onChange={(e) => setSmooth(e.target.checked)} /> Smooth
+        </label>
       </div>
       <svg
         ref={svgRef}
@@ -91,36 +133,39 @@ export default function PriceChart({ points }: { points: TimeseriesPoint[] }) {
         role="img"
         aria-label="Price history chart"
       >
-        {/* gridlines + y labels */}
-        {yTicks.map((v, i) => (
+        {ticks.map((v, i) => (
           <g key={i}>
             <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} stroke="var(--line)" strokeWidth={1} />
             <text x={PAD.left - 10} y={y(v) + 4} textAnchor="end" className="axis">{compact(v)}</text>
           </g>
         ))}
-        {/* x labels */}
         {xTickIdx.map((i, k) => (
-          <text key={k} x={x(i)} y={H - 8} textAnchor={k === 0 ? "start" : k === 2 ? "end" : "middle"} className="axis">
-            {fmtDate(pts[i].timestamp)}
+          <text key={k} x={x(i)} y={H - 8} textAnchor={k === 0 ? "start" : k === xTickIdx.length - 1 ? "end" : "middle"} className="axis">
+            {fmtDate(points[i].timestamp)}
           </text>
         ))}
-        {/* lines */}
-        <path d={line("avgLowPrice")} fill="none" stroke="var(--muted)" strokeWidth={1.6} strokeLinejoin="round" />
-        <path d={line("avgHighPrice")} fill="none" stroke="var(--gold)" strokeWidth={2} strokeLinejoin="round" />
+        {/* lines (gaps break the path) */}
+        <path d={path(buy)} fill="none" stroke="var(--muted)" strokeWidth={1.6} strokeLinejoin="round" strokeLinecap="round" />
+        <path d={path(sell)} fill="none" stroke="var(--gold)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+        {/* volume-weighted dots */}
+        {buy.map((v, i) => (v != null ? <g key={"b" + i}>{dot(v, i, "var(--muted)")}</g> : null))}
+        {sell.map((v, i) => (v != null ? <g key={"s" + i}>{dot(v, i, "var(--gold)")}</g> : null))}
         {/* hover crosshair */}
         {hp && (
           <g>
             <line x1={x(hover!)} x2={x(hover!)} y1={PAD.top} y2={H - PAD.bottom} stroke="var(--line-2)" strokeWidth={1} />
-            {hp.avgHighPrice > 0 && <circle cx={x(hover!)} cy={y(hp.avgHighPrice)} r={3.5} fill="var(--gold)" />}
-            {hp.avgLowPrice > 0 && <circle cx={x(hover!)} cy={y(hp.avgLowPrice)} r={3.5} fill="var(--muted)" />}
+            {hSell != null && <circle cx={x(hover!)} cy={y(hSell)} r={4} fill="var(--gold)" />}
+            {hBuy != null && <circle cx={x(hover!)} cy={y(hBuy)} r={4} fill="var(--muted)" />}
           </g>
         )}
       </svg>
       {hp && (
         <div className="chart-tip" style={{ left: `${Math.min(88, Math.max(12, (x(hover!) / W) * 100))}%` }}>
           <div className="when">{fmtDateTime(hp.timestamp)}</div>
-          <div><span style={{ color: "var(--gold)" }}>Sell</span> <b className="mono">{hp.avgHighPrice > 0 ? full(hp.avgHighPrice) : "—"}</b></div>
-          <div><span style={{ color: "var(--muted)" }}>Buy</span> <b className="mono">{hp.avgLowPrice > 0 ? full(hp.avgLowPrice) : "—"}</b></div>
+          <div><span style={{ color: "var(--gold)" }}>Sell</span> <b className="mono">{hSell != null ? full(hSell) : "—"}</b></div>
+          <div><span style={{ color: "var(--muted)" }}>Buy</span> <b className="mono">{hBuy != null ? full(hBuy) : "—"}</b></div>
+          <div><span style={{ color: "var(--faint)" }}>Spread</span> <b className="mono">{hSell != null && hBuy != null ? full(hSell - hBuy) : "—"}</b></div>
+          <div><span style={{ color: "var(--faint)" }}>Volume</span> <b className="mono">{full(vol[hover!])}</b></div>
         </div>
       )}
     </div>
