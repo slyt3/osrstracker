@@ -24,11 +24,16 @@ const gp = (n: number) => {
   return s + a;
 };
 
-type PresetId = "suggested" | "margins" | "value" | "volume" | "limits" | "all";
+type PresetId = "suggested" | "perhour" | "margins" | "value" | "volume" | "limits" | "all";
+
+// realistic gp/hour: margin × the units you can actually move per hour, which is
+// the smaller of your buy-limit refill rate (limit / 4h) and the market's volume.
+const perHour = (r: Row) => r.margin * Math.min(r.buyLimit / 4, r.hourlyVolume);
 
 // Each preset is a filter + a sort over the live board.
 const PRESETS: { id: PresetId; label: string; hint: string; filter: (r: Row) => boolean; sort: (a: Row, b: Row) => number }[] = [
   { id: "suggested", label: "Suggested", hint: "profitable, liquid, sane entry cost", filter: (r) => r.margin > 0 && r.hourlyVolume >= 300 && r.buy <= 50_000_000, sort: (a, b) => b.profitLimit - a.profitLimit },
+  { id: "perhour", label: "Profit / hour", hint: "realistic gp/hr: margin × fillable units", filter: (r) => r.margin > 0 && r.buyLimit > 0 && r.hourlyVolume >= 50, sort: (a, b) => perHour(b) - perHour(a) },
   { id: "margins", label: "Highest margins", hint: "biggest gp per flip", filter: (r) => r.margin > 0 && r.hourlyVolume >= 50, sort: (a, b) => b.margin - a.margin },
   { id: "value", label: "High value", hint: "expensive items, profitable", filter: (r) => r.margin > 0 && r.buy >= 1_000_000, sort: (a, b) => b.buy - a.buy },
   { id: "volume", label: "High volume", hint: "trades fast", filter: (r) => r.margin > 0, sort: (a, b) => b.hourlyVolume - a.hourlyVolume },
