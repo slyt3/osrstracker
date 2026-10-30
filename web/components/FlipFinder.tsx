@@ -1,8 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Row } from "@/lib/engine";
 import { isLowLiquidity } from "@/lib/liquidity";
+
+type ColKey = "buy" | "sell" | "roi" | "vol" | "limit";
+const COLS: { key: ColKey; label: string }[] = [
+  { key: "buy", label: "Buy" },
+  { key: "sell", label: "Sell" },
+  { key: "roi", label: "ROI" },
+  { key: "vol", label: "Vol/h" },
+  { key: "limit", label: "Limit" },
+];
 
 const icon = (id: number) => `https://static.runelite.net/cache/item/icon/${id}.png`;
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -37,6 +46,22 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
 
   const categoryList = useMemo(() => Array.from(new Set(Object.values(categories))).sort(), [categories]);
   const active = PRESETS.find((p) => p.id === preset)!;
+
+  // per-viewer column visibility (persisted; wrapped so private mode can't throw)
+  const [cols, setCols] = useState<Record<ColKey, boolean>>({ buy: true, sell: true, roi: true, vol: true, limit: true });
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem("ff-cols");
+      if (s) setCols((c) => ({ ...c, ...JSON.parse(s) }));
+    } catch {}
+  }, []);
+  function toggleCol(k: ColKey) {
+    setCols((prev) => {
+      const next = { ...prev, [k]: !prev[k] };
+      try { localStorage.setItem("ff-cols", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
 
   const shown = useMemo(() => {
     // better search: case-insensitive, every whitespace-separated term must match
@@ -90,6 +115,15 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
         )}
       </div>
 
+      <div className="col-toggles" role="group" aria-label="Show or hide columns">
+        <span className="ct-label">Columns</span>
+        {COLS.map((c) => (
+          <label key={c.key} className="ct">
+            <input type="checkbox" checked={cols[c.key]} onChange={() => toggleCol(c.key)} /> {c.label}
+          </label>
+        ))}
+      </div>
+
       <p className="meta">{active.label} · {active.hint} · showing {shown.length}</p>
 
       <div className="board-scroll">
@@ -97,12 +131,12 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
           <thead>
             <tr>
               <th className="left">Item</th>
-              <th>Buy</th>
-              <th>Sell</th>
+              {cols.buy && <th>Buy</th>}
+              {cols.sell && <th>Sell</th>}
               <th>Margin</th>
-              <th>ROI</th>
-              <th>Vol/h</th>
-              <th className="col-opt">Limit</th>
+              {cols.roi && <th>ROI</th>}
+              {cols.vol && <th>Vol/h</th>}
+              {cols.limit && <th className="col-opt">Limit</th>}
             </tr>
           </thead>
           <tbody>
@@ -118,12 +152,12 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
                       {r.members ? <span className="mtag" title="Members only">P</span> : null}
                     </span>
                   </td>
-                  <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>
-                  <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>
+                  {cols.buy && <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>}
+                  {cols.sell && <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>}
                   <td className={"tnum " + (r.margin > 0 ? (thin ? "pos" : "pos lit") : "neg")} title={fmt(r.margin)}>{r.margin > 0 ? "+" : ""}{gp(r.margin)}</td>
-                  <td className="tnum">{(r.roi * 100).toFixed(1)}%</td>
-                  <td className="tnum" title={fmt(r.hourlyVolume)}>{thin && <span className="thin-flag" title="Low volume — margin may be stale">⚠ </span>}{gp(r.hourlyVolume)}</td>
-                  <td className="tnum col-opt">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
+                  {cols.roi && <td className="tnum">{(r.roi * 100).toFixed(1)}%</td>}
+                  {cols.vol && <td className="tnum" title={fmt(r.hourlyVolume)}>{thin && <span className="thin-flag" title="Low volume — margin may be stale">⚠ </span>}{gp(r.hourlyVolume)}</td>}
+                  {cols.limit && <td className="tnum col-opt">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>}
                 </tr>
               );
             })}

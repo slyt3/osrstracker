@@ -1,10 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Row } from "@/lib/engine";
 import { isLowLiquidity } from "@/lib/liquidity";
 
 type SortKey = "margin" | "roi" | "profitLimit" | "hourlyVolume";
+
+type ColKey = "buy" | "sell" | "tax" | "roi" | "profitLimit" | "vol" | "limit";
+const COLTOG: { key: ColKey; label: string }[] = [
+  { key: "buy", label: "Buy" },
+  { key: "sell", label: "Sell" },
+  { key: "tax", label: "Tax" },
+  { key: "roi", label: "ROI" },
+  { key: "profitLimit", label: "Profit/limit" },
+  { key: "vol", label: "Vol/h" },
+  { key: "limit", label: "Limit" },
+];
 
 const COLUMNS: { key: SortKey; label: string; opt?: boolean }[] = [
   { key: "margin", label: "Margin" },
@@ -45,6 +56,23 @@ export default function FlipBoard({
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
   const [category, setCategory] = useState<string>("all");
   const [stars, setStars] = useState<Set<number>>(() => new Set(starred));
+
+  // per-viewer column visibility (persisted; guarded for private mode)
+  const [cols, setCols] = useState<Record<ColKey, boolean>>({ buy: true, sell: true, tax: true, roi: true, profitLimit: true, vol: true, limit: true });
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem("bd-cols");
+      if (s) setCols((c) => ({ ...c, ...JSON.parse(s) }));
+    } catch {}
+  }, []);
+  function toggleCol(k: ColKey) {
+    setCols((prev) => {
+      const next = { ...prev, [k]: !prev[k] };
+      try { localStorage.setItem("bd-cols", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
+  const sortColVisible = (k: SortKey) => (k === "margin" ? true : k === "hourlyVolume" ? cols.vol : cols[k]);
 
   const categoryList = useMemo(
     () => Array.from(new Set(Object.values(categories))).sort(),
@@ -141,6 +169,15 @@ export default function FlipBoard({
         )}
       </div>
 
+      <div className="col-toggles" role="group" aria-label="Show or hide columns">
+        <span className="ct-label">Columns</span>
+        {COLTOG.map((c) => (
+          <label key={c.key} className="ct">
+            <input type="checkbox" checked={cols[c.key]} onChange={() => toggleCol(c.key)} /> {c.label}
+          </label>
+        ))}
+      </div>
+
       <p className="meta">
         Showing {shown.length} of {fmt(filtered.length)} matching ({fmt(rows.length)} total) · updated {updated}
       </p>
@@ -151,10 +188,10 @@ export default function FlipBoard({
             <tr>
               <th aria-label="Watch" />
               <th className="left">Item</th>
-              <th>Buy</th>
-              <th>Sell</th>
-              <th className="col-opt">Tax</th>
-              {COLUMNS.map((c) => (
+              {cols.buy && <th>Buy</th>}
+              {cols.sell && <th>Sell</th>}
+              {cols.tax && <th className="col-opt">Tax</th>}
+              {COLUMNS.filter((c) => sortColVisible(c.key)).map((c) => (
                 <th
                   key={c.key}
                   onClick={() => setSortKey(c.key)}
@@ -165,7 +202,7 @@ export default function FlipBoard({
                   {c.label} {sortKey === c.key ? "▼" : ""}
                 </th>
               ))}
-              <th className="col-opt">Limit</th>
+              {cols.limit && <th className="col-opt">Limit</th>}
             </tr>
           </thead>
           <tbody>
@@ -193,19 +230,21 @@ export default function FlipBoard({
                       {r.members ? <span className="mtag" title="Members only">P</span> : null}
                     </span>
                   </td>
-                  <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>
-                  <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>
-                  <td className="tnum col-opt" style={{ color: "var(--faint)" }} title={fmt(r.tax)}>{gp(r.tax)}</td>
+                  {cols.buy && <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>}
+                  {cols.sell && <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>}
+                  {cols.tax && <td className="tnum col-opt" style={{ color: "var(--faint)" }} title={fmt(r.tax)}>{gp(r.tax)}</td>}
                   <td className={"tnum " + (r.margin > 0 ? (thin ? "pos" : "pos lit") : "neg")} title={fmt(r.margin)}>{gp(r.margin)}</td>
-                  <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
-                  <td className="tnum col-opt" title={fmt(r.profitLimit)}>{gp(r.profitLimit)}</td>
-                  <td className="tnum" title={fmt(r.hourlyVolume)}>
-                    {thin && (
-                      <span className="thin-flag" title="Low volume — this margin may be stale and hard to fill">⚠ </span>
-                    )}
-                    {gp(r.hourlyVolume)}
-                  </td>
-                  <td className="tnum col-opt">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>
+                  {cols.roi && <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>}
+                  {cols.profitLimit && <td className="tnum col-opt" title={fmt(r.profitLimit)}>{gp(r.profitLimit)}</td>}
+                  {cols.vol && (
+                    <td className="tnum" title={fmt(r.hourlyVolume)}>
+                      {thin && (
+                        <span className="thin-flag" title="Low volume — this margin may be stale and hard to fill">⚠ </span>
+                      )}
+                      {gp(r.hourlyVolume)}
+                    </td>
+                  )}
+                  {cols.limit && <td className="tnum col-opt">{r.buyLimit ? fmt(r.buyLimit) : "—"}</td>}
                 </tr>
               );
             })}
