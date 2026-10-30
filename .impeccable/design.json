@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-30T00:00:00Z",
+  "title": "Design System: OSRS Tracker",
+  "extensions": {
+    "colorMeta": {
+      "bg": { "role": "neutral", "displayName": "Graphite Ground", "canonical": "#0e0f12", "tonalRamp": ["#0a0b0d", "#0e0f12", "#15171b", "#1a1d22", "#22262b", "#2f343b", "#626a75", "#9aa2ad"] },
+      "bg-2": { "role": "neutral", "displayName": "Recessed Graphite", "canonical": "#0a0b0d", "tonalRamp": ["#060709", "#0a0b0d", "#0e0f12", "#15171b", "#1a1d22", "#22262b", "#2f343b", "#626a75"] },
+      "panel": { "role": "neutral", "displayName": "Panel", "canonical": "#15171b", "tonalRamp": ["#0a0b0d", "#0e0f12", "#15171b", "#1a1d22", "#22262b", "#2f343b", "#626a75", "#9aa2ad"] },
+      "panel-2": { "role": "neutral", "displayName": "Raised Panel", "canonical": "#1a1d22", "tonalRamp": ["#0e0f12", "#15171b", "#1a1d22", "#22262b", "#2f343b", "#626a75", "#9aa2ad", "#f4f6f8"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#22262b", "tonalRamp": ["#0e0f12", "#15171b", "#1a1d22", "#22262b", "#2f343b", "#4a515b", "#626a75", "#9aa2ad"] },
+      "line-2": { "role": "neutral", "displayName": "Strong Hairline", "canonical": "#2f343b", "tonalRamp": ["#15171b", "#1a1d22", "#22262b", "#2f343b", "#4a515b", "#626a75", "#9aa2ad", "#f4f6f8"] },
+      "text": { "role": "neutral", "displayName": "Near-White", "canonical": "#f4f6f8", "tonalRamp": ["#1a1d22", "#2f343b", "#626a75", "#9aa2ad", "#c3cad2", "#e2e6ea", "#f4f6f8", "#ffffff"] },
+      "muted": { "role": "neutral", "displayName": "Muted", "canonical": "#9aa2ad", "tonalRamp": ["#22262b", "#2f343b", "#4a515b", "#626a75", "#7e8792", "#9aa2ad", "#c3cad2", "#e2e6ea"] },
+      "faint": { "role": "neutral", "displayName": "Faint", "canonical": "#626a75", "tonalRamp": ["#15171b", "#22262b", "#2f343b", "#4a515b", "#626a75", "#7e8792", "#9aa2ad", "#c3cad2"] },
+      "gain": { "role": "primary", "displayName": "Signal Green", "canonical": "#27e07a", "tonalRamp": ["#04140b", "#0a2b16", "#114a2a", "#1c7d4b", "#27e07a", "#42e98d", "#5cf0a0", "#c9f9dd"] },
+      "gain-2": { "role": "primary", "displayName": "Bright Green", "canonical": "#5cf0a0", "tonalRamp": ["#04140b", "#0a2b16", "#1c7d4b", "#27e07a", "#42e98d", "#5cf0a0", "#8ff6c0", "#c9f9dd"] },
+      "gain-dim": { "role": "primary", "displayName": "Dim Green", "canonical": "#1c7d4b", "tonalRamp": ["#04140b", "#0a2b16", "#114a2a", "#1c7d4b", "#27a060", "#27e07a", "#5cf0a0", "#c9f9dd"] },
+      "loss": { "role": "secondary", "displayName": "Loss Red", "canonical": "#ff5c5c", "tonalRamp": ["#2a0c0c", "#5a1f1f", "#8c3030", "#c23f3f", "#ff5c5c", "#ff8585", "#ffb0b0", "#ffd9d9"] },
+      "ink-on-accent": { "role": "neutral", "displayName": "Ink on Accent", "canonical": "#04140b", "tonalRamp": ["#020a05", "#04140b", "#0a2b16", "#114a2a", "#1c7d4b", "#27e07a", "#5cf0a0", "#c9f9dd"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing hero headline only; key phrase set in Signal Green. Max ~15ch." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings." },
+      "title": { "displayName": "Title", "purpose": "Panel and column titles, plan tiers." },
+      "body": { "displayName": "Body", "purpose": "Prose and subcopy; constrained to ~58ch." },
+      "figure": { "displayName": "Figure", "purpose": "Every market number — gp, ROI, volume, price, tax formula. Geist Mono tabular-nums." },
+      "label": { "displayName": "Label", "purpose": "Field labels, table headers, feed strip, metadata. Quiet mono, no tracked caps." }
+    },
+    "shadows": [
+      { "name": "focus-ring", "value": "0 0 0 2px rgba(39,224,122,0.2)", "purpose": "Input/select focus affordance, paired with a Signal-Green border. Not elevation." },
+      { "name": "pro-accent-ring", "value": "inset 0 0 0 1px rgba(39,224,122,0.18)", "purpose": "Inner accent ring on the recommended pricing plan only." },
+      { "name": "tooltip-cast", "value": "0 8px 24px rgba(0,0,0,0.5)", "purpose": "Price-chart tooltip only — the single transient soft cast allowed." }
+    ],
+    "motion": [
+      { "name": "state", "value": "0.15s (background, border-color, color)", "purpose": "Default transition for button/link/control state changes; implicit ease." },
+      { "name": "press", "value": "0.05s transform", "purpose": "Button :active translateY(1px) press." },
+      { "name": "star", "value": "0.12s color", "purpose": "Watchlist star hover/active color shift." },
+      { "name": "blip", "value": "2.4s ease-out (keyframes blip)", "purpose": "LIVE status dot pulse ring; disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "820px" },
+      { "name": "mobile", "value": "760px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one solid-color control: live/positive call to action.",
+      "html": "<button class=\"ds-btn-primary\">Open the full board →</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.62rem 1.15rem; border-radius: 7px; font-family: 'Geist', system-ui, sans-serif; font-weight: 600; font-size: 0.94rem; letter-spacing: -0.01em; border: 1px solid transparent; background: #27e07a; color: #04140b; cursor: pointer; transition: background 0.15s, transform 0.05s; } .ds-btn-primary:hover { background: #5cf0a0; } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: 2px solid #27e07a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: hairline ghost, no fill at rest.",
+      "html": "<button class=\"ds-btn-ghost\">What it costs</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.62rem 1.15rem; border-radius: 7px; font-family: 'Geist', system-ui, sans-serif; font-weight: 600; font-size: 0.94rem; letter-spacing: -0.01em; background: transparent; color: #f4f6f8; border: 1px solid #2f343b; cursor: pointer; transition: background 0.15s, border-color 0.15s; } .ds-btn-ghost:hover { border-color: #f4f6f8; background: #15171b; } .ds-btn-ghost:active { transform: translateY(1px); } .ds-btn-ghost:focus-visible { outline: 2px solid #27e07a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Recessed field sunk into the darker ground; green focus ring.",
+      "html": "<input class=\"ds-input\" type=\"search\" placeholder=\"Filter items…\" />",
+      "css": ".ds-input { min-width: 13rem; padding: 0.5rem 0.65rem; border: 1px solid #2f343b; border-radius: 7px; background: #0a0b0d; color: #f4f6f8; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.94rem; } .ds-input::placeholder { color: #626a75; } .ds-input:focus { outline: none; border-color: #27e07a; box-shadow: 0 0 0 2px rgba(39,224,122,0.2); }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat surface edged by a hairline; no shadow.",
+      "html": "<div class=\"ds-panel\"><h3 class=\"ds-panel-title\">The arithmetic</h3><p class=\"ds-panel-body\">Every number nets the 2% GE tax. No asterisks.</p></div>",
+      "css": ".ds-panel { background: #15171b; border: 1px solid #22262b; border-radius: 10px; padding: 2rem; color: #f4f6f8; } .ds-panel-title { margin: 0 0 0.7rem; font-family: 'Geist', system-ui, sans-serif; font-weight: 600; font-size: 1.1rem; letter-spacing: -0.015em; } .ds-panel-body { margin: 0; color: #9aa2ad; font-family: 'Geist', system-ui, sans-serif; font-size: 16px; line-height: 1.6; }"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Quiet muted link in the sticky graphite bar; near-white on hover.",
+      "html": "<a class=\"ds-nav-link\" href=\"#\">Board</a>",
+      "css": ".ds-nav-link { color: #9aa2ad; font-family: 'Geist', system-ui, sans-serif; font-weight: 500; font-size: 0.92rem; letter-spacing: -0.01em; text-decoration: none; transition: color 0.15s; } .ds-nav-link:hover { color: #f4f6f8; } .ds-nav-link:focus-visible { outline: 2px solid #27e07a; outline-offset: 2px; border-radius: 4px; }"
+    },
+    {
+      "name": "Flip Board",
+      "kind": "custom",
+      "refersTo": "table.board",
+      "description": "Signature live table. Hairline-ruled rows, sticky raised header, figures in tabular mono. Margin shows full green when real+liquid (lit), dim green otherwise; losses red.",
+      "html": "<div class=\"ds-board-wrap\"><table class=\"ds-board\"><thead><tr><th class=\"ds-l\">Item</th><th>Buy</th><th>Tax</th><th class=\"ds-active\">Margin</th><th>ROI</th></tr></thead><tbody><tr><td class=\"ds-l\"><a href=\"#\">Dragon bones</a><span class=\"ds-mtag\">P</span></td><td class=\"ds-num\">2.31k</td><td class=\"ds-num ds-faint\">−50</td><td class=\"ds-num ds-pos ds-lit\">+612</td><td class=\"ds-num\">26.5%</td></tr><tr><td class=\"ds-l\"><a href=\"#\">Rune platebody</a></td><td class=\"ds-num\">37.9k</td><td class=\"ds-num ds-faint\">−780</td><td class=\"ds-num ds-pos\">+1.44k</td><td class=\"ds-num\">3.8%</td></tr><tr><td class=\"ds-l\"><a href=\"#\">Magic logs</a></td><td class=\"ds-num\">1.02k</td><td class=\"ds-num ds-faint\">−50</td><td class=\"ds-num ds-neg\">−18</td><td class=\"ds-num\">-1.8%</td></tr></tbody></table></div>",
+      "css": ".ds-board-wrap { overflow-x: auto; border: 1px solid #22262b; border-radius: 10px; } .ds-board { border-collapse: collapse; width: 100%; font-size: 0.94rem; } .ds-board th, .ds-board td { padding: 0.6rem 0.9rem; text-align: right; white-space: nowrap; } .ds-board th.ds-l, .ds-board td.ds-l { text-align: left; } .ds-board thead th { background: #1a1d22; color: #626a75; border-bottom: 1px solid #2f343b; font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 500; font-size: 0.72rem; } .ds-board thead th.ds-active { color: #27e07a; } .ds-board tbody tr { border-bottom: 1px solid #22262b; } .ds-board tbody tr:last-child { border-bottom: 0; } .ds-board tbody tr:hover { background: #15171b; } .ds-board td a { color: #f4f6f8; font-family: 'Geist', system-ui, sans-serif; font-weight: 500; text-decoration: none; } .ds-board td a:hover { color: #27e07a; } .ds-num { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; } .ds-faint { color: #626a75; } .ds-pos { color: #1c7d4b; } .ds-pos.ds-lit { color: #27e07a; } .ds-neg { color: #ff5c5c; } .ds-mtag { display: inline-block; margin-left: 0.4rem; padding: 0 0.3rem; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 0.6rem; font-weight: 600; color: #27e07a; border: 1px solid #1c7d4b; border-radius: 4px; vertical-align: middle; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Graphite & Signal",
+    "overview": "OSRS Tracker is a cool, flat market terminal. The ground is a deliberately un-warm graphite (#0e0f12) — slate, not stone — carrying near-white type on hairline structure. There are no bevels, no glow, no gradients-as-decoration and no gold: the owner read every warm/parchment/carved-stone treatment as \"AI slop\" and rejected it. What remains is a quiet, dense surface where the only color is a single flat signal — green means gain, red means loss — and everything else is modelled in weight, scale and a 1px line. The system runs on one accent economy. Green (#27e07a) is the live, positive signal; red (#ff5c5c) is the only second voice, reserved for loss. There is no third hue, no blue, no status palette, no decorative tint. Depth is not expressed by shadow — surfaces are flat panels edged by hairlines, and elevation reads as a change of ground tone (#0e0f12 → #15171b → #1a1d22), never as a floating card. The voice is blunt and the surface is instrumental. Nothing is ornamental, nothing floats, nothing fades up. The accent is scarce enough that when a figure turns full green it carries meaning — a real, fillable profit — rather than decoration.",
+    "keyCharacteristics": [
+      "Cool graphite ground (#0e0f12), deliberately not warm; recessed and raised tones layer without shadow.",
+      "One flat signal accent: green = gain, red = loss. No gold, no third hue, no status palette.",
+      "1px hairline borders carry all structure; surfaces are flat, never floated on a grey shadow.",
+      "Hierarchy from weight and scale, not uppercase tracking, color noise or ornament.",
+      "Geist for everything typeset; Geist Mono for every market figure (tabular-nums). Soft-square 10px corners."
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Color is spent only as signal: green for gain, red for loss. Nothing else on the screen carries a hue — no blue, no gold, no tinted panels, no decorative accent. Everything else is graphite, hairline and near-white, and emphasis is bought with weight and scale, never with color.", "section": "colors" },
+      { "name": "The Lit-Means-Liquid Rule", "body": "A profit figure shows full Signal Green (#27e07a, .pos.lit) only when it is both real and liquid/fillable; a positive-but-unproven profit stays Dim Green (#1c7d4b, .pos); a loss is red (.neg). Full green is a claim about fillability, not merely about sign.", "section": "colors" },
+      { "name": "The Weight-Not-Decoration Rule", "body": "Emphasis comes from weight (500/600) and scale, not from uppercase tracking, color or ornament. There is no all-caps eyebrow device: labels are quiet mono at letter-spacing 0, and a heading is never preceded by a tracked-out kicker.", "section": "typography" },
+      { "name": "The Tabular-Figures Rule", "body": "Every number sourced from the market feed is set in Geist Mono with tabular-nums. Figures never use the sans UI face; prose never uses the mono.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest and separated by a 1px hairline, never by a shadow. A soft grey drop-shadow under a card is forbidden; if two surfaces must read apart, change the ground tone or draw a hairline. Shadows appear only as a focus ring, an accent ring, or a transient tooltip.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the ground cool graphite (#0e0f12) and layer depth with tone (#0a0b0d → #15171b → #1a1d22), not shadow.",
+      "Do spend color only as signal: Signal Green (#27e07a) for gain, Loss Red (#ff5c5c) for loss, nothing else.",
+      "Do reserve full Signal Green for a profit that is real AND liquid (the Lit-Means-Liquid Rule); keep unproven profit Dim Green (#1c7d4b).",
+      "Do draw structure with 1px hairlines (#22262b / #2f343b) and keep surfaces flat.",
+      "Do set every market figure in Geist Mono with tabular-nums; buy emphasis with weight and scale.",
+      "Do keep corners soft-square (10px panels / 7px controls) and borders 1px."
+    ],
+    "donts": [
+      "Don't reintroduce warm/fantasy dressing — no gold, parchment, wood, carved-stone, coin-gold or glow. The owner rejected these as \"AI slop\".",
+      "Don't add a third hue — no blue, no status palette, no decorative tint. Green already means up, red means down.",
+      "Don't float a surface on a soft grey drop-shadow; separate surfaces with tone or a hairline.",
+      "Don't use bevels, inner-light modelling, or gradient-filled text; emphasis is weight, scale and the flat accent.",
+      "Don't put an all-caps / tracked-out eyebrow or kicker above a heading. Labels are quiet mono at letter-spacing 0.",
+      "Don't use pills, large radii, or organic curves; the form language is restrained soft-square."
+    ]
+  }
+}

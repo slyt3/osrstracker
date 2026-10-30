@@ -141,7 +141,7 @@ export default async function Landing() {
         <div className="container">
           <div className="panel tax">
             <div>
-              <h2 style={{ fontSize: "clamp(1.5rem,2.8vw,2rem)" }}>The arithmetic, chiselled in</h2>
+              <h2 style={{ fontSize: "clamp(1.5rem,2.8vw,2rem)" }}>The arithmetic, in the open</h2>
               <p style={{ color: "var(--muted)", margin: "0.7rem 0 0", maxWidth: "46ch" }}>
                 The GE takes 2% of every sale — rounded down, nothing under 50 gp, capped at
                 5,000,000 per item, with a fixed exempt list. It&apos;s in every number on the
