@@ -66,10 +66,8 @@ export default async function ItemPage({
 
         {row && isLowLiquidity(row) && (
           <div className="warn-note">
-            <strong>⚠ Low volume ({row.hourlyVolume.toLocaleString("en-US")}/h).</strong> This item
-            trades under {LOW_VOLUME}/h, so the buy/sell spread — and the margin — may be stale: the
-            buy and sell prices are each just the last insta-sell and insta-buy, which on thin items
-            can be far apart and from different times. A big gap here is usually unreliable, not easy profit.
+            <strong>⚠ Low volume ({row.hourlyVolume.toLocaleString("en-US")}/h).</strong> Under {LOW_VOLUME}/h
+            the spread can be stale — a big margin here is often unreliable, not easy profit.
           </div>
         )}
 
