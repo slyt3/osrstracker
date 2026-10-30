@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/Logo";
+import NavMore from "@/components/NavMore";
 
 export default function SiteHeader() {
   return (
@@ -7,13 +8,12 @@ export default function SiteHeader() {
       <div className="container bar">
         <Link href="/" aria-label="OSRS Tracker home"><Wordmark /></Link>
         <nav className="nav">
-          <Link className="link hide-sm" href="/board">Flip board</Link>
-          <Link className="link hide-sm" href="/craft">Craft</Link>
-          <Link className="link hide-sm" href="/watchlist">Watchlist</Link>
-          <Link className="link hide-sm" href="/journal">Journal</Link>
-          <Link className="link hide-sm" href="/alerts">Alerts</Link>
-          <Link className="link hide-sm" href="/pricing">Pricing</Link>
-          <Link className="btn btn-gold" href="/board">Open the board</Link>
+          <Link className="link hide-sm" href="/board">Board</Link>
+          <Link className="link hide-sm" href="/market">Market</Link>
+          <Link className="link hide-sm" href="/deals">Deals</Link>
+          <Link className="link hide-sm" href="/calculators">Calculators</Link>
+          <NavMore />
+          <Link className="btn btn-gold" href="/board">Find flips</Link>
         </nav>
       </div>
     </header>
