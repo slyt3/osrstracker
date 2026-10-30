@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Row } from "@/lib/engine";
+import SortTable, { type Col } from "@/components/SortTable";
 
 const icon = (id: number) => `https://static.runelite.net/cache/item/icon/${id}.png`;
 const fmt = (n: number) => Math.round(n).toLocaleString("en-US");
@@ -48,6 +49,26 @@ export default function Allocator({ rows }: { rows: Row[] }) {
     return { picks, spend, profit, leftover: gold - spend, roi: spend > 0 ? (profit / spend) * 100 : 0 };
   }, [rows, gold, minVol, members]);
 
+  type Pick = { r: Row; qty: number; spend: number; profit: number };
+  const pickCols: Col<Pick>[] = [
+    {
+      key: "name", label: "Buy", sortVal: (p) => p.r.name,
+      render: (p) => (
+        <span className="bd-item">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="bd-ic" src={icon(p.r.itemId)} alt="" loading="lazy" width={24} height={24} />
+          <a href={`/item/${p.r.itemId}`}>{p.r.name}</a>
+          {p.r.members ? <span className="mtag" title="Members only">P</span> : null}
+        </span>
+      ),
+    },
+    { key: "qty", label: "Qty", num: true, sortVal: (p) => p.qty, render: (p) => fmt(p.qty) },
+    { key: "unit", label: "Unit", num: true, sortVal: (p) => p.r.buy, render: (p) => <span title={fmt(p.r.buy)}>{gpc(p.r.buy)}</span> },
+    { key: "spend", label: "Spend", num: true, sortVal: (p) => p.spend, render: (p) => <span title={fmt(p.spend)}>{gpc(p.spend)}</span> },
+    { key: "margin", label: "Margin/ea", num: true, sortVal: (p) => p.r.margin, render: (p) => <span className="pos lit">+{gpc(p.r.margin)}</span> },
+    { key: "profit", label: "Profit", num: true, sortVal: (p) => p.profit, render: (p) => <span className="pos lit" title={fmt(p.profit)}>+{gpc(p.profit)}</span> },
+  ];
+
   return (
     <div>
       <div className="controls">
@@ -76,39 +97,7 @@ export default function Allocator({ rows }: { rows: Row[] }) {
       {plan.picks.length === 0 ? (
         <p className="notice">Enter a bankroll (and ease the min-volume filter) to see an allocation.</p>
       ) : (
-        <div className="board-scroll">
-          <table className="board">
-            <thead>
-              <tr>
-                <th className="left">Buy</th>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Spend</th>
-                <th>Margin/ea</th>
-                <th>Profit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {plan.picks.map(({ r, qty, spend, profit }) => (
-                <tr key={r.itemId}>
-                  <td className="left">
-                    <span className="bd-item">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img className="bd-ic" src={icon(r.itemId)} alt="" loading="lazy" width={24} height={24} />
-                      <a href={`/item/${r.itemId}`}>{r.name}</a>
-                      {r.members ? <span className="mtag" title="Members only">P</span> : null}
-                    </span>
-                  </td>
-                  <td className="tnum">{fmt(qty)}</td>
-                  <td className="tnum" title={fmt(r.buy)}>{gpc(r.buy)}</td>
-                  <td className="tnum" title={fmt(spend)}>{gpc(spend)}</td>
-                  <td className="tnum pos lit">+{gpc(r.margin)}</td>
-                  <td className="tnum pos lit" title={fmt(profit)}>+{gpc(profit)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <SortTable rows={plan.picks} cols={pickCols} rowKey={(p) => String(p.r.itemId)} initialKey="profit" max={300} />
       )}
       <p className="meta" style={{ marginTop: "1rem" }}>
         Allocates to the highest return-on-gp first, capped at each item&apos;s 4-hour buy limit. Margins are after the 2% tax.
