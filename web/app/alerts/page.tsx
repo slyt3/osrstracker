@@ -22,7 +22,6 @@ export default async function AlertsPage() {
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow">Notifications</p>
         <h1>Alerts</h1>
         <p>
           Get pinged on Discord when an item hits your target. Set an alert from any{" "}

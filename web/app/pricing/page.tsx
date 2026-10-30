@@ -26,7 +26,6 @@ export default function Pricing() {
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow">Pricing</p>
         <h1>The data is free. Pay for the shortcuts.</h1>
         <p style={{ maxWidth: "54ch" }}>
           The flip board and charts stay free. Pro is the automation that saves you from

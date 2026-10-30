@@ -70,7 +70,6 @@ export default async function ItemPage({
         )}
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "0 0 1rem", flexWrap: "wrap", gap: "0.8rem" }}>
-          <span className="eyebrow" style={{ margin: 0 }}>Price history</span>
           <div className="ranges">
             {TIMESTEPS.map((t) => (
               <Link key={t} href={`/item/${id}?range=${t}`} className={t === range ? "on" : ""}>{t}</Link>

@@ -33,7 +33,6 @@ export default async function JournalPage() {
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow">Your trades</p>
         <h1>Journal &amp; P&amp;L</h1>
         <p>Log your buys and sells — realized profit is computed average-cost, after the 2% tax.</p>
       </div>

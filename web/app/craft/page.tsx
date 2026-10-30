@@ -14,7 +14,6 @@ export default async function CraftPage() {
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow">Production</p>
         <h1>Crafting profit</h1>
         <p>Buy the inputs, make the item, sell the output — profit is after the 2% GE tax. Watch the volume: a fat margin you can only make a few of isn&apos;t worth much.</p>
       </div>

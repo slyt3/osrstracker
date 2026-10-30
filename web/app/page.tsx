@@ -88,7 +88,7 @@ export default async function Landing() {
                       <td className="tnum">{gp(r.buy)}</td>
                       <td className="tnum">{gp(r.sell)}</td>
                       <td className="tnum" style={{ color: "var(--faint)" }}>−{gp(r.tax)}</td>
-                      <td className="tnum pos">+{gp(r.margin)}</td>
+                      <td className="tnum pos lit">+{gp(r.margin)}</td>
                       <td className="tnum">{(r.roi * 100).toFixed(1)}%</td>
                       <td className="tnum col-opt">{vol(r.hourlyVolume)}</td>
                     </tr>
@@ -109,7 +109,6 @@ export default async function Landing() {
       <section>
         <div className="container">
           <div className="section-head">
-            <p className="eyebrow">Straight answers</p>
             <h2>What it does, and what it doesn&apos;t</h2>
           </div>
           <div className="honest">
@@ -142,8 +141,7 @@ export default async function Landing() {
         <div className="container">
           <div className="panel tax">
             <div>
-              <p className="eyebrow">The 2% everyone forgets</p>
-              <h2 style={{ fontSize: "clamp(1.4rem,2.6vw,1.9rem)" }}>Here is the arithmetic</h2>
+              <h2 style={{ fontSize: "clamp(1.5rem,2.8vw,2rem)" }}>The arithmetic, chiselled in</h2>
               <p style={{ color: "var(--muted)", margin: "0.7rem 0 0", maxWidth: "46ch" }}>
                 The GE takes 2% of every sale — rounded down, nothing under 50 gp, capped at
                 5,000,000 per item, with a fixed exempt list. It&apos;s in every number on the

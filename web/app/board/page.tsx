@@ -21,7 +21,6 @@ export default async function BoardPage() {
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow">Grand Exchange</p>
         <h1>Flip board</h1>
         <p>Every item ranked by profit — margins are after the 2% GE tax.</p>
       </div>

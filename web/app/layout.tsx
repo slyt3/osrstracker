@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Space_Grotesk, JetBrains_Mono, Cinzel } from "next/font/google";
+import { Cinzel, Spectral, Spline_Sans_Mono } from "next/font/google";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import "./globals.css";
 
-// Not Inter. Space Grotesk carries body/UI (real character + tabular figures);
-// JetBrains Mono gives gp values a market-data feel; Cinzel is the display face
-// — carved Roman capitals that read like a stone inscription, the OSRS UI voice.
-const sans = Space_Grotesk({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
+// Lithic-lore trio for the runestone world:
+// Cinzel  — inscriptional Roman capitals, letters cut into stone (display).
+// Spectral — a reading serif with weight and screen legibility (body/UI).
+// Spline Sans Mono — machined tabular numerals for the glowing gp figures.
 const display = Cinzel({ subsets: ["latin"], variable: "--font-display", display: "swap" });
+const sans = Spectral({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-sans", display: "swap" });
+const mono = Spline_Sans_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: "OSRS Tracker — live Grand Exchange flips",

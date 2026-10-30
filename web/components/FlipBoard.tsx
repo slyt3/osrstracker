@@ -191,7 +191,7 @@ export default function FlipBoard({
                   <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>
                   <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>
                   <td className="tnum col-opt" style={{ color: "var(--faint)" }} title={fmt(r.tax)}>{gp(r.tax)}</td>
-                  <td className={"tnum " + (r.margin > 0 ? "pos" : "neg")} title={fmt(r.margin)}>{gp(r.margin)}</td>
+                  <td className={"tnum " + (r.margin > 0 ? (thin ? "pos" : "pos lit") : "neg")} title={fmt(r.margin)}>{gp(r.margin)}</td>
                   <td className="tnum">{(r.roi * 100).toFixed(2)}%</td>
                   <td className="tnum col-opt" title={fmt(r.profitLimit)}>{gp(r.profitLimit)}</td>
                   <td className="tnum" title={fmt(r.hourlyVolume)}>

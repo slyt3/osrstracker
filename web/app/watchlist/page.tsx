@@ -22,7 +22,6 @@ export default async function WatchlistPage() {
   return (
     <main>
       <div className="container page-head">
-        <p className="eyebrow">Your items</p>
         <h1>Watchlist</h1>
         <p>
           Items you&apos;re tracking, with live margins after tax.{" "}
