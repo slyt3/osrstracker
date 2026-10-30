@@ -43,6 +43,8 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
   const [query, setQuery] = useState("");
   const [members, setMembers] = useState<"all" | "p2p" | "f2p">("all");
   const [category, setCategory] = useState("all");
+  const [volDir, setVolDir] = useState<null | "asc" | "desc">(null); // manual Vol/h sort (overrides preset)
+  const [hideThin, setHideThin] = useState(false); // drop noisy sub-100/h items
 
   const categoryList = useMemo(() => Array.from(new Set(Object.values(categories))).sort(), [categories]);
   const active = PRESETS.find((p) => p.id === preset)!;
@@ -69,13 +71,15 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
     const out = rows.filter(
       (r) =>
         active.filter(r) &&
+        (!hideThin || !isLowLiquidity(r)) &&
         (members === "all" || (members === "p2p" ? r.members : !r.members)) &&
         (category === "all" || categories[r.itemId] === category) &&
         (terms.length === 0 || terms.every((t) => r.name.toLowerCase().includes(t))),
     );
-    out.sort(active.sort);
+    if (volDir) out.sort((a, b) => (volDir === "desc" ? b.hourlyVolume - a.hourlyVolume : a.hourlyVolume - b.hourlyVolume));
+    else out.sort(active.sort);
     return out.slice(0, MAX_ROWS);
-  }, [rows, active, query, members, category, categories]);
+  }, [rows, active, query, members, category, categories, volDir, hideThin]);
 
   return (
     <div>
@@ -86,7 +90,7 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
             role="tab"
             aria-selected={preset === p.id}
             className={"ff-tab" + (preset === p.id ? " on" : "")}
-            onClick={() => setPreset(p.id)}
+            onClick={() => { setPreset(p.id); setVolDir(null); }}
             title={p.hint}
           >
             {p.label}
@@ -122,6 +126,8 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
             <input type="checkbox" checked={cols[c.key]} onChange={() => toggleCol(c.key)} /> {c.label}
           </label>
         ))}
+        <span style={{ width: 1, height: "1rem", background: "var(--line-2)" }} aria-hidden="true" />
+        <label className="ct"><input type="checkbox" checked={hideThin} onChange={(e) => setHideThin(e.target.checked)} /> Hide low volume</label>
       </div>
 
       <p className="meta">{active.label} · {active.hint} · showing {shown.length}</p>
@@ -135,7 +141,11 @@ export default function FlipFinder({ rows, categories = {} }: { rows: Row[]; cat
               {cols.sell && <th>Sell</th>}
               <th>Margin</th>
               {cols.roi && <th>ROI</th>}
-              {cols.vol && <th>Vol/h</th>}
+              {cols.vol && (
+                <th className={"sortable" + (volDir ? " active" : "")} onClick={() => setVolDir((d) => (d === "desc" ? "asc" : "desc"))} title="Click to sort by volume (high/low)">
+                  Vol/h {volDir === "desc" ? "▼" : volDir === "asc" ? "▲" : ""}
+                </th>
+              )}
               {cols.limit && <th className="col-opt">Limit</th>}
             </tr>
           </thead>
