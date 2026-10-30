@@ -14,6 +14,7 @@ const COLUMNS: { key: SortKey; label: string; opt?: boolean }[] = [
 ];
 
 const MAX_ROWS = 100;
+const icon = (id: number) => `https://static.runelite.net/cache/item/icon/${id}.png`;
 const fmt = (n: number) => n.toLocaleString("en-US");
 // compact gp so wide columns (21,761,339) become narrow (21.76m)
 const gp = (n: number) => {
@@ -185,8 +186,12 @@ export default function FlipBoard({
                     </button>
                   </td>
                   <td className="left">
-                    <a href={`/item/${r.itemId}`}>{r.name}</a>
-                    {r.members ? <span className="mtag" title="Members only">P</span> : null}
+                    <span className="bd-item">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className="bd-ic" src={icon(r.itemId)} alt="" loading="lazy" width={24} height={24} />
+                      <a href={`/item/${r.itemId}`}>{r.name}</a>
+                      {r.members ? <span className="mtag" title="Members only">P</span> : null}
+                    </span>
                   </td>
                   <td className="tnum" title={fmt(r.buy)}>{gp(r.buy)}</td>
                   <td className="tnum" title={fmt(r.sell)}>{gp(r.sell)}</td>
