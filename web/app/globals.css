@@ -1,42 +1,39 @@
 /* ============================================================================
-   OSRS Tracker — "Runestone Engraving" world.
-   A flip terminal carved in stone: figures are incised runes that KINDLE GOLD
-   only when the profit is real and fillable; thin or losing values stay cold.
-   One raking light models every incision. Two inks on stone: coin-gold, and a
-   single loss-red. No gradient text (engraving is done with chisel shadows),
-   no eyebrows, no green. Seed 89095626, direction #5.
+   OSRS Tracker — "Graphite & Signal".
+   Modern, cool, flat. A graphite ground, near-white type, hairline structure,
+   and ONE vivid flat accent used as signal: green = gain, red = loss. No gold,
+   no glow, no bevels, no gradients-as-decoration. Emphasis comes from weight,
+   scale and the single accent — never from colour noise.
    ========================================================================== */
 
 :root {
-  /* granite ground, lit from the upper-left */
-  --bg:       #14120c;
-  --bg-2:     #0c0a06;
-  --stone:    #1d1a12;  /* carved panel face */
-  --stone-2:  #262116;  /* raised stone */
-  --incise:   #090704;  /* groove shadow (into the stone) */
-  --chisel:   #473b28;  /* lit chisel edge */
-  --line:     #322a1c;  /* ruled line in stone */
-  --line-2:   #4a3d28;
+  /* cool graphite ground (deliberately not warm) */
+  --bg:     #0e0f12;
+  --bg-2:   #0a0b0d;  /* recessed / inputs */
+  --panel:  #15171b;  /* raised surface */
+  --panel-2:#1a1d22;  /* hover / header */
+  --line:   #22262b;  /* 1px hairline */
+  --line-2: #2f343b;  /* stronger hairline */
 
-  /* the two inks */
-  --gold:      #f0b22f;  /* lit coin-gold */
-  --gold-2:    #ffd673;  /* highlight */
-  --gold-cold: #8a6a2c;  /* dormant / unlit incision */
-  --gold-deep: #593c0e;  /* gold in the groove */
-  --red:       #c6412a;  /* loss */
-  --red-cold:  #8c3a2a;
+  --text:  #f4f6f8;   /* near-white */
+  --muted: #9aa2ad;   /* secondary */
+  --faint: #626a75;   /* tertiary / labels */
 
-  --text:  #ece2ce;  /* warm bone */
-  --muted: #ab9d80;
-  --faint: #7d6f55;
+  /* the signal accent: one green, one red, flat */
+  --gain:   #27e07a;
+  --gain-2: #5cf0a0;
+  --gain-dim: #1c7d4b;  /* profit that is not yet proven liquid */
+  --loss:   #ff5c5c;
 
-  /* kept for legacy selectors; mapped onto the two-ink world */
-  --panel: var(--stone);
-  --panel-2: var(--stone-2);
-  --green: var(--gold);
+  /* legacy aliases so existing selectors keep resolving */
+  --gold: var(--gain); --gold-2: var(--gain-2); --gold-deep: var(--gain-dim);
+  --green: var(--gain); --red: var(--loss);
+  --panel-2b: var(--panel-2);
+  --font-display: var(--font-sans);
 
   --maxw: 1120px;
-  --r: 4px;  /* stone is cut square; corners are tight */
+  --r: 10px;      /* modern soft-square */
+  --r-sm: 7px;
 }
 
 * { box-sizing: border-box; }
@@ -44,345 +41,256 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background-color: var(--bg);
-  /* one raking light from the upper-left, dark pooling into the far corner —
-     region-scale lighting, not a tiled texture */
-  background-image:
-    radial-gradient(900px 620px at 18% -6%, rgba(240, 178, 47, 0.07), transparent 62%),
-    radial-gradient(1200px 900px at 120% 120%, rgba(0, 0, 0, 0.55), transparent 60%);
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--text);
-  font-family: var(--font-sans), Georgia, serif;
-  font-size: 17px;
-  line-height: 1.65;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-a { color: var(--gold); text-decoration: none; }
-a:hover { color: var(--gold-2); }
+a { color: var(--text); text-decoration: none; }
+a:hover { color: var(--gain); }
 
-/* inscriptional capitals, cut INTO the stone (groove dark up-left, lit down-right) */
-h1, h2, h3 { margin: 0; line-height: 1.08; }
-h1, h2 {
-  font-family: var(--font-display), Georgia, serif; font-weight: 600;
-  letter-spacing: 0.01em; color: var(--text);
-  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.55), 1px 1px 0 rgba(71, 59, 40, 0.35);
-}
-h3 { font-family: var(--font-sans), serif; font-weight: 700; letter-spacing: 0; }
+h1, h2, h3 { margin: 0; font-family: var(--font-sans), system-ui, sans-serif; }
+h1, h2 { font-weight: 600; line-height: 1.05; letter-spacing: -0.03em; }
+h3 { font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; }
 
 .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
-/* incised gold inlay — SOLID gold with an engraved groove, never a gradient.
-   .lit adds the kindle-glow (reserved by law for real, fillable profit). */
-.hl, .ink-gold {
-  color: var(--gold); font-weight: 700;
-  text-shadow: -1px -1px 0 var(--incise), 0 1px 0 rgba(255, 214, 115, 0.2);
-}
-.lit {
-  color: var(--gold);
-  text-shadow: 0 0 10px rgba(240, 178, 47, 0.55), 0 0 2px rgba(255, 214, 115, 0.8), -1px -1px 0 var(--incise);
-}
+/* accent emphasis — flat, no gradient, no glow */
+.hl, .ink-gold { color: var(--gain); }
 
-/* data figures: machined numerals seated in the stone */
-.tnum, .mono { font-family: var(--font-mono), monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
-.pos { color: var(--gold-cold); }       /* profit, cold until proven liquid */
-.pos.lit { color: var(--gold); }        /* profit that is real + fillable: glows */
-.neg { color: var(--red); }
+/* data figures */
+.tnum, .mono { font-family: var(--font-mono), ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.pos { color: var(--gain-dim); }      /* profit, dimmed until proven liquid */
+.pos.lit { color: var(--gain); }      /* real + fillable profit: full signal */
+.neg { color: var(--loss); }
 
-.eyebrow { /* retained for legacy pages; the landing uses none */
-  text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; font-weight: 700;
-  color: var(--faint); margin: 0 0 1rem; font-family: var(--font-mono), monospace;
+.eyebrow { /* retained for legacy; the landing uses none */
+  font-size: 0.72rem; font-weight: 500; color: var(--faint); margin: 0 0 1rem;
+  letter-spacing: 0; text-transform: none; font-family: var(--font-mono), monospace;
 }
 hr.rule { height: 1px; border: 0; background: var(--line); margin: 0; }
 
-/* ---------- browser surfaces, themed from the palette ---------- */
-::selection { background: rgba(240, 178, 47, 0.28); color: #fff4da; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 2px; }
-* { caret-color: var(--gold); }
-* { scrollbar-color: var(--gold-cold) var(--bg-2); scrollbar-width: thin; }
+/* ---------- browser surfaces, themed ---------- */
+::selection { background: rgba(39, 224, 122, 0.25); color: #eafff3; }
+:focus-visible { outline: 2px solid var(--gain); outline-offset: 2px; border-radius: 4px; }
+* { caret-color: var(--gain); }
+* { scrollbar-color: var(--line-2) var(--bg); scrollbar-width: thin; }
 ::-webkit-scrollbar { width: 12px; height: 12px; }
-::-webkit-scrollbar-track { background: var(--bg-2); }
-::-webkit-scrollbar-thumb { background: var(--chisel); border: 3px solid var(--bg-2); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-cold); }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line-2); border: 3px solid var(--bg); border-radius: 7px; }
+::-webkit-scrollbar-thumb:hover { background: #3c424b; }
 
-/* ---------- carved stone keys (buttons) ---------- */
+/* ---------- buttons (flat, modern) ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.66rem 1.25rem; border-radius: var(--r); font-family: var(--font-display), serif;
-  font-weight: 600; font-size: 0.95rem; letter-spacing: 0.04em; text-transform: uppercase;
-  cursor: pointer; border: 1px solid var(--incise);
-  transition: filter 0.14s, transform 0.06s, box-shadow 0.14s, color 0.14s;
+  padding: 0.62rem 1.15rem; border-radius: var(--r-sm); font: inherit; font-weight: 600; font-size: 0.94rem;
+  letter-spacing: -0.01em; cursor: pointer; border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.05s;
   white-space: nowrap;
 }
-.btn:active { transform: translateY(2px); }
+.btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+/* primary = the signal, solid */
+.btn-gold { background: var(--gain); color: #04140b; }
+.btn-gold:hover { background: var(--gain-2); }
+/* secondary = hairline ghost */
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--line-2); }
+.btn-ghost:hover { border-color: var(--text); background: var(--panel); }
 
-/* gold-inlaid key: lit metal face seated in a stone bezel */
-.btn-gold {
-  color: #2a1a02;
-  background: linear-gradient(177deg, var(--gold-2), var(--gold) 52%, var(--gold-deep));
-  box-shadow: inset 0 1px 0 rgba(255, 248, 214, 0.8), inset 0 -3px 5px rgba(89, 60, 14, 0.55),
-    0 3px 0 var(--incise), 0 5px 10px rgba(0, 0, 0, 0.45);
-  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.45);
-}
-.btn-gold:hover { filter: brightness(1.07); }
-.btn-gold:active { box-shadow: inset 0 2px 4px rgba(89, 60, 14, 0.6), 0 1px 0 var(--incise); }
+/* ---------- surfaces: flat panels, hairline edges ---------- */
+.card, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
 
-/* bare stone key */
-.btn-ghost {
-  color: var(--text);
-  background: linear-gradient(177deg, var(--stone-2), var(--stone));
-  border-color: var(--line-2);
-  box-shadow: inset 0 1px 0 var(--chisel), inset 0 -3px 5px rgba(0, 0, 0, 0.45), 0 3px 0 var(--incise);
-}
-.btn-ghost:hover { color: var(--gold-2); border-color: var(--gold-cold); }
-.btn-ghost:active { box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 0 var(--incise); }
-
-/* ---------- surfaces: recesses cut into the stone ---------- */
-.card, .panel {
-  background: linear-gradient(180deg, var(--stone), var(--bg));
-  border: 1px solid var(--incise); border-radius: var(--r);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55), inset 0 -1px 0 var(--chisel), 0 1px 0 var(--chisel);
-}
-
-/* ---------- header: a lintel of stone with a gold-incised base ---------- */
+/* ---------- header: flat bar, hairline base ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 40;
-  background: linear-gradient(180deg, rgba(29, 26, 18, 0.97), rgba(12, 10, 6, 0.97));
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--gold-deep);
-  box-shadow: 0 1px 0 var(--chisel), 0 4px 14px rgba(0, 0, 0, 0.55);
+  background: rgba(14, 15, 18, 0.82); backdrop-filter: blur(12px) saturate(1.3);
+  border-bottom: 1px solid var(--line);
 }
-.site-header .bar { display: flex; align-items: center; justify-content: space-between; height: 66px; }
-.nav { display: flex; align-items: center; gap: 1.45rem; }
-.nav a.link { color: var(--muted); font-family: var(--font-display), serif; font-weight: 500;
-  font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.nav a.link:hover { color: var(--gold-2); }
+.site-header .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+.nav { display: flex; align-items: center; gap: 1.55rem; }
+.nav a.link { color: var(--muted); font-weight: 500; font-size: 0.92rem; letter-spacing: -0.01em; }
+.nav a.link:hover { color: var(--text); }
 
 .wordmark { display: inline-flex; align-items: center; gap: 0.6rem; }
-.wordmark .wm-mark { color: var(--gold); flex: 0 0 auto;
-  filter: drop-shadow(-1px -1px 0 rgba(0,0,0,0.5)) drop-shadow(0 0 6px rgba(240,178,47,0.4)); }
-.wordmark .wm-text {
-  font-family: var(--font-display), serif; font-weight: 700; font-size: 1.24rem;
-  letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold);
-  text-shadow: -1px -1px 0 var(--incise), 0 1px 0 rgba(255, 214, 115, 0.2);
-}
+.wordmark .wm-mark { color: var(--gain); flex: 0 0 auto; }
+.wordmark .wm-text { font-weight: 600; font-size: 1.14rem; letter-spacing: -0.02em; color: var(--text); }
 
 /* ---------- footer ---------- */
 .site-footer { border-top: 1px solid var(--line); margin-top: 6rem; color: var(--muted); font-size: 0.9rem; }
 .site-footer a { color: var(--muted); }
-.site-footer a:hover { color: var(--gold-2); }
+.site-footer a:hover { color: var(--gain); }
 
-.actions { display: flex; gap: 0.85rem; flex-wrap: wrap; align-items: center; }
+.actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
 
 /* ============================================================================
-   Landing hero — the carved runestone console
+   Landing hero — a live feed panel
    ========================================================================== */
-.term { padding: 3rem 0 1.4rem; }
+.term { padding: 3.2rem 0 1.4rem; }
 
-/* brass feed-strip inscribed across the top of the slab */
+/* status strip */
 .term-bar {
   display: flex; align-items: center; gap: 1rem;
-  font-family: var(--font-mono), monospace; font-size: 0.72rem; letter-spacing: 0.08em;
-  color: var(--faint); text-transform: uppercase;
-  border: 1px solid var(--incise); border-bottom: 0; border-radius: var(--r) var(--r) 0 0;
-  background: linear-gradient(180deg, #241d10, #15110a);
-  box-shadow: inset 0 1px 0 var(--chisel), inset 0 2px 6px rgba(0, 0, 0, 0.5);
-  padding: 0.62rem 1rem;
+  font-family: var(--font-mono), monospace; font-size: 0.74rem; letter-spacing: 0.01em;
+  color: var(--faint); text-transform: none;
+  border: 1px solid var(--line); border-bottom: 0; border-radius: var(--r) var(--r) 0 0;
+  background: var(--panel); padding: 0.6rem 1rem;
 }
-.term-live {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  color: var(--gold); font-weight: 700; letter-spacing: 0.16em;
-}
-.term-bar .blip {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
-  box-shadow: 0 0 6px rgba(240, 178, 47, 0.9); animation: blip 2.4s ease-out infinite;
-}
-.term-bar .blip.off { background: var(--red); box-shadow: 0 0 6px rgba(198, 65, 42, 0.8); animation: none; }
-.term-live:has(.blip.off) { color: var(--red); }
+.term-live { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gain); font-weight: 600; letter-spacing: 0.02em; }
+.term-bar .blip { width: 7px; height: 7px; border-radius: 50%; background: var(--gain); animation: blip 2.4s ease-out infinite; }
+.term-bar .blip.off { background: var(--loss); animation: none; }
+.term-live:has(.blip.off) { color: var(--loss); }
 @keyframes blip {
-  0% { box-shadow: 0 0 0 0 rgba(240, 178, 47, 0.6), 0 0 6px rgba(240, 178, 47, 0.9); }
-  70% { box-shadow: 0 0 0 7px rgba(240, 178, 47, 0), 0 0 6px rgba(240, 178, 47, 0.5); }
-  100% { box-shadow: 0 0 0 0 rgba(240, 178, 47, 0), 0 0 6px rgba(240, 178, 47, 0.9); }
+  0% { box-shadow: 0 0 0 0 rgba(39, 224, 122, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(39, 224, 122, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(39, 224, 122, 0); }
 }
 @media (prefers-reduced-motion: reduce) { .term-bar .blip { animation: none; } }
 .term-path { color: var(--muted); }
 .term-when { margin-left: auto; }
 .term-when .sep { color: var(--line-2); }
 
-/* the inscription slab */
+/* lede */
 .term-lede {
-  position: relative;
-  border-left: 1px solid var(--incise); border-right: 1px solid var(--incise);
-  background: linear-gradient(180deg, var(--stone-2), var(--stone));
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), inset 1px 0 0 var(--chisel), inset -1px 0 0 var(--incise);
-  padding: 2.6rem 2.1rem 2.2rem;
+  border-left: 1px solid var(--line); border-right: 1px solid var(--line);
+  background: var(--panel); padding: 2.6rem 2.1rem 2.2rem;
 }
-.term-lede h1 {
-  font-size: clamp(2.3rem, 5.4vw, 3.7rem); max-width: 15ch; line-height: 1.02;
-  text-shadow: -2px -2px 0 rgba(0, 0, 0, 0.5), 2px 2px 0 rgba(71, 59, 40, 0.3);
-}
-.term-lede h1 .hl { /* struck gold, kindled */
-  color: var(--gold);
-  text-shadow: 0 0 16px rgba(240, 178, 47, 0.45), 0 0 2px rgba(255, 214, 115, 0.7), -1px -1px 0 var(--incise);
-}
-.term-lede p { color: var(--muted); max-width: 58ch; margin: 1.15rem 0 1.8rem; font-size: 1.08rem; }
+.term-lede h1 { font-size: clamp(2.4rem, 5.6vw, 4rem); max-width: 15ch; line-height: 1.0; letter-spacing: -0.035em; }
+.term-lede h1 .hl { color: var(--gain); }
+.term-lede p { color: var(--muted); max-width: 58ch; margin: 1.2rem 0 1.9rem; font-size: 1.1rem; }
 
-/* four chiselled rivets anchor the slab + board */
-.term-lede::before, .term-lede::after,
-.term-board::before, .term-board::after {
-  content: ""; position: absolute; width: 8px; height: 8px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--gold-2), var(--gold-deep) 72%, #3a2708);
-  box-shadow: inset 0 -1px 1px rgba(0,0,0,0.6), 0 0 5px rgba(240, 178, 47, 0.35); z-index: 2;
-}
-.term-lede::before { top: 11px; left: 11px; }
-.term-lede::after  { top: 11px; right: 11px; }
-
-/* the live tally, flush beneath the slab, sealed with a gold base line */
+/* the live board, flush beneath the lede */
 .term-board {
-  position: relative; border-radius: 0 0 var(--r) var(--r);
-  border: 1px solid var(--incise); border-top: 0; border-bottom: 1px solid var(--gold-deep);
+  border-radius: 0 0 var(--r) var(--r);
+  border: 1px solid var(--line); border-top: 0;
 }
-.term-board::before { bottom: 11px; left: 11px; }
-.term-board::after  { bottom: 11px; right: 11px; }
-.term-board table.board { font-size: 0.97rem; }
-.term-board thead th { background: linear-gradient(180deg, #241d10, #15110a); color: var(--gold); }
-.term-warming { color: var(--faint); padding: 2.4rem 0.9rem; text-align: left; font-style: italic; }
+.term-board table.board { font-size: 0.96rem; }
+.term-board thead th { background: var(--panel-2); }
+.term-warming { color: var(--faint); padding: 2.4rem 0.9rem; text-align: left; }
 
 .term-foot {
-  font-family: var(--font-mono), monospace; font-size: 0.74rem; color: var(--faint);
-  letter-spacing: 0.02em; margin: 0.9rem 0 0; line-height: 1.8;
+  font-family: var(--font-mono), monospace; font-size: 0.75rem; color: var(--faint);
+  letter-spacing: -0.01em; margin: 0.9rem 0 0; line-height: 1.8;
 }
 
 /* ============================================================================
-   Honest ledger: what it does / doesn't — two inks, no colour third
+   Honest ledger: what it does / doesn't
    ========================================================================== */
 .honest {
   display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-  border: 1px solid var(--incise); border-radius: var(--r); overflow: hidden;
-  background: linear-gradient(180deg, var(--stone), var(--bg));
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--panel);
 }
 .hon-col { padding: 2rem 1.9rem; }
-.hon-col + .hon-col { border-left: 1px solid var(--incise); box-shadow: inset 1px 0 0 var(--chisel); }
-.hon-col h3 {
-  font-family: var(--font-display), serif; font-size: 1.15rem; letter-spacing: 0.04em;
-  text-transform: uppercase; font-weight: 700; margin-bottom: 1.25rem;
-}
-.hon-col.does h3 { color: var(--gold); text-shadow: 0 0 10px rgba(240,178,47,0.35), -1px -1px 0 var(--incise); }
-.hon-col.doesnt h3 { color: var(--red); text-shadow: -1px -1px 0 var(--incise); }
+.hon-col + .hon-col { border-left: 1px solid var(--line); }
+.hon-col h3 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.01em; margin-bottom: 1.3rem; color: var(--muted);
+  font-family: var(--font-mono), monospace; }
+.hon-col.does h3 { color: var(--gain); }
+.hon-col.doesnt h3 { color: var(--loss); }
 .hon-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
-.hon-col li { position: relative; padding-left: 1.6rem; color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
-.hon-col li::before { position: absolute; left: 0; top: 0; font-family: var(--font-mono), monospace; font-weight: 700; }
-.hon-col.does li::before { content: "ᚠ"; color: var(--gold); }   /* fehu — "wealth/cattle", the trade rune */
-.hon-col.doesnt li::before { content: "—"; color: var(--red-cold); }
+.hon-col li { position: relative; padding-left: 1.5rem; color: var(--muted); font-size: 0.97rem; line-height: 1.5; }
+.hon-col li::before { position: absolute; left: 0; top: 0.05rem; font-family: var(--font-mono), monospace; font-weight: 700; }
+.hon-col.does li::before { content: "+"; color: var(--gain); }
+.hon-col.doesnt li::before { content: "−"; color: var(--loss); }
 
 /* ---------- sections ---------- */
-section { padding: 4rem 0; }
+section { padding: 4.2rem 0; }
 .section-head { margin-bottom: 2.4rem; }
-.section-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
-.section-head p { color: var(--muted); margin: 0.7rem 0 0; max-width: 56ch; }
+.section-head h2 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); letter-spacing: -0.03em; }
+.section-head p { color: var(--muted); margin: 0.7rem 0 0; max-width: 58ch; }
 
-/* ---------- the tax arithmetic, chiselled into a tablet ---------- */
-.tax { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2.4rem; align-items: center; padding: 2.6rem; }
-.tax h2 { color: var(--gold); text-shadow: 0 0 12px rgba(240,178,47,0.3), -1px -1px 0 var(--incise); }
+/* ---------- tax arithmetic ---------- */
+.tax { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2.6rem; align-items: center; padding: 2.6rem; }
+.tax h2 { letter-spacing: -0.03em; }
 .tax > div > p { color: var(--muted) !important; }
 .formula {
-  font-family: var(--font-mono), monospace; font-size: 0.95rem; line-height: 2.2; color: var(--text);
-  background: var(--bg-2); border: 1px solid var(--incise); border-radius: var(--r);
-  padding: 1.2rem 1.4rem; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+  font-family: var(--font-mono), monospace; font-size: 0.95rem; line-height: 2.1; color: var(--text);
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 1.2rem 1.4rem;
 }
-.formula b { color: var(--gold); font-weight: 700; text-shadow: 0 0 8px rgba(240,178,47,0.4); }
+.formula b { color: var(--gain); font-weight: 600; }
 
 /* ---------- pricing ---------- */
 .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; max-width: 780px; margin: 0 auto; }
 .plan { padding: 2rem; }
-.plan.pro { border-color: var(--gold-deep);
-  box-shadow: inset 0 1px 0 var(--gold-cold), inset 0 0 0 1px rgba(240, 178, 47, 0.12), inset 0 2px 6px rgba(0,0,0,0.5); }
+.plan.pro { border-color: var(--gain-dim); box-shadow: inset 0 0 0 1px rgba(39, 224, 122, 0.18); }
 .plan .ptop { display: flex; align-items: center; justify-content: space-between; }
-.plan .tier { font-family: var(--font-display), serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.04em; text-transform: uppercase; }
-.plan .rec { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-family: var(--font-mono), monospace; }
-.plan .price { font-family: var(--font-mono), monospace; font-size: 2.3rem; font-weight: 500; margin: 0.6rem 0; letter-spacing: -0.02em; color: var(--text); }
-.plan .price small { font-size: 0.85rem; color: var(--faint); font-family: var(--font-sans), serif; }
+.plan .tier { font-weight: 600; font-size: 1.1rem; letter-spacing: -0.02em; }
+.plan .rec { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gain); font-family: var(--font-mono), monospace; }
+.plan .price { font-family: var(--font-mono), monospace; font-size: 2.3rem; font-weight: 500; margin: 0.6rem 0; letter-spacing: -0.03em; color: var(--text); }
+.plan .price small { font-size: 0.85rem; color: var(--faint); font-family: var(--font-sans), sans-serif; }
 .plan ul { list-style: none; padding: 0; margin: 1.3rem 0 1.7rem; display: grid; gap: 0.7rem; }
-.plan li { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--muted); font-size: 0.96rem; }
-.plan li svg { flex: 0 0 auto; color: var(--gold); margin-top: 0.2rem; }
+.plan li { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--muted); font-size: 0.95rem; }
+.plan li svg { flex: 0 0 auto; color: var(--gain); margin-top: 0.2rem; }
 
-/* ---------- page head (board / item / pricing) ---------- */
+/* ---------- page head ---------- */
 .page-head { padding: 3rem 0 1rem; }
-.page-head h1 { font-size: clamp(2rem, 4.2vw, 2.8rem); }
+.page-head h1 { font-size: clamp(2rem, 4.2vw, 2.9rem); letter-spacing: -0.03em; }
 .page-head p { color: var(--muted); margin: 0.6rem 0 0; }
 .back { color: var(--muted); font-size: 0.9rem; font-family: var(--font-mono), monospace; }
-.back:hover { color: var(--gold-2); }
+.back:hover { color: var(--gain); }
 
 /* ---------- board controls ---------- */
 .controls { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: flex-end; margin: 1.4rem 0; }
 .controls input[type=search] { min-width: 13rem; }
-.controls label { display: flex; flex-direction: column; font-size: 0.66rem; color: var(--faint);
-  text-transform: uppercase; letter-spacing: 0.1em; gap: 0.35rem; font-weight: 700; font-family: var(--font-mono), monospace; }
-.controls input, .controls select { padding: 0.5rem 0.65rem; border: 1px solid var(--line-2); border-radius: var(--r);
-  background: var(--bg-2); color: var(--text); font-family: var(--font-mono), monospace;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); }
-.controls input[type=number] { width: 7.5rem; }
-.controls input:focus, .controls select:focus { outline: none; border-color: var(--gold); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 0 2px rgba(240,178,47,0.25); }
+.controls label { display: flex; flex-direction: column; font-size: 0.68rem; color: var(--faint);
+  letter-spacing: 0; gap: 0.35rem; font-weight: 500; font-family: var(--font-mono), monospace; }
+.controls input, .controls select { padding: 0.5rem 0.65rem; border: 1px solid var(--line-2); border-radius: var(--r-sm);
+  background: var(--bg-2); color: var(--text); font: inherit; }
+.controls input[type=number] { width: 7.5rem; font-family: var(--font-mono), monospace; }
+.controls input:focus, .controls select:focus { outline: none; border-color: var(--gain); box-shadow: 0 0 0 2px rgba(39,224,122,0.2); }
 
 .meta { font-size: 0.82rem; color: var(--faint); margin: 0.5rem 0 1rem; font-family: var(--font-mono), monospace; }
 
-/* ---------- the board, as a runestone tally ---------- */
-.board-scroll { overflow-x: auto; border: 1px solid var(--incise); border-radius: var(--r);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55), inset 0 -1px 0 var(--chisel); }
+/* ---------- the board ---------- */
+.board-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); }
 table.board { border-collapse: collapse; width: 100%; font-size: 0.94rem; }
 table.board th, table.board td { padding: 0.6rem 0.9rem; text-align: right; white-space: nowrap; }
 table.board th.left, table.board td.left { text-align: left; }
 table.board td.tnum, table.board td.mono { font-family: var(--font-mono), monospace; font-variant-numeric: tabular-nums; }
-table.board thead th { position: sticky; top: 0; background: linear-gradient(180deg, #241d10, #15110a); color: var(--gold);
-  border-bottom: 1px solid var(--gold-deep); font-weight: 700; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
-  font-family: var(--font-mono), monospace; box-shadow: inset 0 1px 0 var(--chisel); }
+table.board thead th { position: sticky; top: 0; background: var(--panel-2); color: var(--faint);
+  border-bottom: 1px solid var(--line-2); font-weight: 500; font-size: 0.72rem; letter-spacing: 0; font-family: var(--font-mono), monospace; }
 table.board th.sortable { cursor: pointer; user-select: none; }
-table.board th.sortable:hover { color: var(--gold-2); }
-table.board th.active { color: var(--gold-2); }
-table.board td a { font-weight: 600; color: var(--text); }
-table.board td a:hover { color: var(--gold-2); }
-/* chiselled ruling between rows */
-table.board tbody tr { border-bottom: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(71, 59, 40, 0.12); }
-table.board tbody tr:nth-child(even) { background: rgba(0, 0, 0, 0.18); }
+table.board th.sortable:hover { color: var(--text); }
+table.board th.active { color: var(--gain); }
+table.board td a { font-weight: 500; color: var(--text); }
+table.board td a:hover { color: var(--gain); }
+table.board tbody tr { border-bottom: 1px solid var(--line); }
 table.board tbody tr:last-child { border-bottom: 0; }
-table.board tbody tr:hover { background: rgba(240, 178, 47, 0.08); }
+table.board tbody tr:hover { background: var(--panel); }
 
-.notice { background: var(--stone); border: 1px solid var(--line-2); color: var(--muted);
-  border-radius: var(--r); padding: 1.1rem 1.3rem; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+.notice { background: var(--panel); border: 1px solid var(--line-2); color: var(--muted);
+  border-radius: var(--r); padding: 1.1rem 1.3rem; }
 
 /* ---------- journal form ---------- */
 .journal-form { display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: flex-end; margin: 1.4rem 0;
-  padding: 1.4rem; border: 1px solid var(--incise); border-radius: var(--r);
-  background: linear-gradient(180deg, var(--stone), var(--bg)); box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
-.journal-form label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.66rem;
-  text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); font-weight: 700; font-family: var(--font-mono), monospace; }
+  padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+.journal-form label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.68rem;
+  letter-spacing: 0; color: var(--faint); font-weight: 500; font-family: var(--font-mono), monospace; }
 .journal-form input, .journal-form select { padding: 0.5rem 0.65rem; border: 1px solid var(--line-2);
-  border-radius: var(--r); background: var(--bg-2); color: var(--text); font-family: var(--font-mono), monospace;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
-.journal-form input[type=number] { width: 8rem; }
-.journal-form input:focus, .journal-form select:focus { outline: none; border-color: var(--gold); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 0 2px rgba(240,178,47,0.25); }
-.jf-err { flex-basis: 100%; color: var(--red); font-size: 0.85rem; margin: 0.2rem 0 0; }
-.jf-ok { flex-basis: 100%; color: var(--gold); font-size: 0.85rem; margin: 0.2rem 0 0; }
+  border-radius: var(--r-sm); background: var(--bg-2); color: var(--text); font: inherit; }
+.journal-form input[type=number] { width: 8rem; font-family: var(--font-mono), monospace; }
+.journal-form input:focus, .journal-form select:focus { outline: none; border-color: var(--gain); box-shadow: 0 0 0 2px rgba(39,224,122,0.2); }
+.jf-err { flex-basis: 100%; color: var(--loss); font-size: 0.85rem; margin: 0.2rem 0 0; }
+.jf-ok { flex-basis: 100%; color: var(--gain); font-size: 0.85rem; margin: 0.2rem 0 0; }
 
 /* members tag */
-.mtag { display: inline-block; font-size: 0.6rem; font-weight: 700; color: var(--gold); border: 1px solid var(--gold-deep);
-  border-radius: 3px; padding: 0 0.28rem; margin-left: 0.4rem; vertical-align: middle; font-family: var(--font-mono), monospace; }
+.mtag { display: inline-block; font-size: 0.6rem; font-weight: 600; color: var(--gain); border: 1px solid var(--gain-dim);
+  border-radius: 4px; padding: 0 0.3rem; margin-left: 0.4rem; vertical-align: middle; font-family: var(--font-mono), monospace; }
 
-/* low-liquidity flag + warning — cold, un-kindled */
-.thin-flag { color: var(--red-cold); cursor: help; }
+/* low-liquidity flag + warning */
+.thin-flag { color: var(--loss); cursor: help; }
 table.board tbody tr.thin .left a { color: var(--faint); }
-.warn-note { background: rgba(198, 65, 42, 0.07); border: 1px solid var(--red-cold); color: var(--muted);
+.warn-note { background: rgba(255, 92, 92, 0.06); border: 1px solid rgba(255, 92, 92, 0.3); color: var(--muted);
   border-radius: var(--r); padding: 1rem 1.2rem; margin: 0 0 1.3rem; font-size: 0.92rem; line-height: 1.55; }
-.warn-note strong { color: var(--red); }
+.warn-note strong { color: var(--loss); }
 
 /* watchlist star */
 table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align: center; padding-left: 0.6rem; padding-right: 0; }
-.star { background: none; border: 0; cursor: pointer; font-size: 1.05rem; line-height: 1; color: var(--faint); padding: 0.2rem; transition: color 0.12s, text-shadow 0.12s; }
-.star:hover { color: var(--gold); }
-.star.on { color: var(--gold); text-shadow: 0 0 8px rgba(240, 178, 47, 0.6); }
+.star { background: none; border: 0; cursor: pointer; font-size: 1.05rem; line-height: 1; color: var(--faint); padding: 0.2rem; transition: color 0.12s; }
+.star:hover { color: var(--gain); }
+.star.on { color: var(--gain); }
 
 /* ---------- price chart ---------- */
 .pricechart { width: 100%; height: auto; display: block; }
@@ -390,29 +298,27 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
 .chart-legend { display: flex; gap: 1.2rem; margin-bottom: 0.6rem; color: var(--muted); font-size: 0.82rem; font-family: var(--font-mono), monospace; }
 .chart-legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 0.4rem; vertical-align: middle; }
 .chart-tip { position: absolute; top: 0; transform: translateX(-50%); pointer-events: none;
-  background: var(--stone-2); border: 1px solid var(--line-2); border-radius: var(--r); padding: 0.5rem 0.7rem;
-  font-size: 0.8rem; white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.55); font-family: var(--font-mono), monospace; }
+  background: var(--panel-2); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 0.5rem 0.7rem;
+  font-size: 0.8rem; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.5); font-family: var(--font-mono), monospace; }
 .chart-tip .when { color: var(--faint); font-size: 0.72rem; margin-bottom: 0.3rem; }
 .chart-tip b { font-weight: 500; }
 
-/* range toggle — carved stone keys */
-.ranges { display: inline-flex; gap: 0.3rem; border: 1px solid var(--incise); border-radius: var(--r); padding: 0.22rem;
-  background: var(--bg-2); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
-.ranges a { padding: 0.3rem 0.72rem; border-radius: 3px; font-size: 0.85rem; color: var(--muted); font-family: var(--font-mono), monospace; }
-.ranges a:hover { color: var(--gold-2); }
-.ranges a.on { background: linear-gradient(177deg, var(--gold-2), var(--gold) 52%, var(--gold-deep)); color: #2a1a02;
-  box-shadow: inset 0 1px 0 rgba(255,248,214,0.7), inset 0 -2px 3px rgba(89,60,14,0.5); }
+/* range toggle */
+.ranges { display: inline-flex; gap: 0.3rem; border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 0.22rem; background: var(--bg-2); }
+.ranges a { padding: 0.3rem 0.72rem; border-radius: 5px; font-size: 0.85rem; color: var(--muted); font-family: var(--font-mono), monospace; }
+.ranges a:hover { color: var(--text); }
+.ranges a.on { background: var(--gain); color: #04140b; }
 
 /* item header stats */
 .item-stats { display: flex; flex-wrap: wrap; gap: 2.2rem; margin: 1.4rem 0 1.8rem; }
-.item-stats .s .l { color: var(--faint); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--font-mono), monospace; }
+.item-stats .s .l { color: var(--faint); font-size: 0.68rem; letter-spacing: 0; font-family: var(--font-mono), monospace; }
 .item-stats .s .v { font-family: var(--font-mono), monospace; font-size: 1.4rem; margin-top: 0.2rem; color: var(--text); }
 
 /* ---------- responsive ---------- */
 @media (max-width: 820px) {
   .tax, .plans, .honest { grid-template-columns: 1fr; gap: 2rem; }
   .honest { gap: 0; }
-  .hon-col + .hon-col { border-left: 0; border-top: 1px solid var(--incise); box-shadow: inset 0 1px 0 var(--chisel); }
+  .hon-col + .hon-col { border-left: 0; border-top: 1px solid var(--line); }
   .nav .link.hide-sm { display: none; }
   .term-bar { flex-wrap: wrap; gap: 0.5rem 1rem; }
   .term-when { margin-left: 0; width: 100%; }
@@ -420,7 +326,6 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
 }
 
 @media (max-width: 760px) {
-  body { font-size: 16px; }
   table.board .col-opt { display: none; }
   table.board th, table.board td { padding: 0.52rem 0.58rem; }
   table.board { font-size: 0.88rem; }

@@ -67,8 +67,13 @@ about liquidity where competitors show gross spreads that never fill.
 - Hard constraint from the owner: **must not read as generic AI-generated
   design** — no purple gradients, no identical grey-shadow card grids, no
   all-caps eyebrow on every heading, no fade-up-everything motion.
-- The owner has explicitly asked the identity to **evoke the OSRS Grand
-  Exchange / in-game interface** (wood, parchment, carved panels, coin-gold).
+- **Corrected preference (owner feedback, overrides earlier notes):** the owner
+  read warm/fantasy palettes — wood, parchment, carved stone, coin-gold, glow —
+  as "AI slop" and rejected them. The identity is **modern, cool and flat**:
+  "Graphite & Signal" — a cool graphite ground, near-white type, hairline
+  structure, and one flat signal accent (green = gain, red = loss). No gold, no
+  glow, no bevels, no gradient-as-decoration. OSRS affinity now lives in the
+  product's language and the green/red gains-signal, not in medieval dressing.
 
 ## Evidence on Hand
 
