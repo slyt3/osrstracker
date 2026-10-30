@@ -412,6 +412,15 @@ a.cr-ing:hover { border-color: var(--gold); color: var(--text); }
 /* blocked rows (over your level or bankroll) */
 table.board tbody tr.cant { opacity: 0.42; }
 
+/* item page "how to make it" */
+.irec-list { display: grid; gap: 1rem; }
+.irec { padding: 1.2rem 1.3rem; }
+.irec-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; }
+.irec-method { font-weight: 600; }
+.irec-qty { font-size: 0.78rem; color: var(--faint); font-family: var(--font-mono), monospace; }
+.irec-figs { display: flex; flex-wrap: wrap; gap: 0.5rem 1.8rem; margin-top: 1rem; padding-top: 0.9rem; border-top: 1px solid var(--line); font-size: 0.82rem; color: var(--faint); }
+.irec-figs b { color: var(--text); font-weight: 600; margin-left: 0.35rem; }
+
 /* "your setup" row */
 .craft-setup { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem 0.8rem; margin: 0 0 1rem;
   padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }

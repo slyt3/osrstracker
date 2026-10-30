@@ -43,6 +43,60 @@ function parseSkills(json: string | null): { name: string; level: number }[] {
 // Joins recipes (DB) to live prices (engine board) and computes make-cost vs
 // sell-after-tax. Only recipes whose output AND every input are priceable are
 // returned. Null if the engine is unreachable.
+type PriceMap = Map<number, { buy: number; sell: number; vol: number }>;
+type RecipeWithMaterials = {
+  id: string; outputItemId: number | null; outputName: string; outputQty: number;
+  facilities: string | null; subject: string; members: boolean; skillsJson: string | null;
+  materials: { itemId: number | null; name: string; qty: number }[];
+};
+
+function priceMap(board: { rows: { itemId: number; buy: number; sell: number; hourlyVolume: number }[] }): PriceMap {
+  const price: PriceMap = new Map();
+  for (const r of board.rows) price.set(r.itemId, { buy: r.buy, sell: r.sell, vol: r.hourlyVolume });
+  return price;
+}
+
+// Compute one recipe's economics against live prices, or null if unpriceable.
+function toCraftRow(rec: RecipeWithMaterials, price: PriceMap): CraftRow | null {
+  if (rec.outputItemId == null || rec.materials.length === 0) return null;
+  const op = price.get(rec.outputItemId);
+  if (!op || op.sell <= 0) return null;
+
+  let cost = 0;
+  let minVol = Infinity;
+  for (const m of rec.materials) {
+    if (m.itemId == null) return null;
+    const mp = price.get(m.itemId);
+    if (!mp || mp.buy <= 0) return null;
+    cost += m.qty * mp.buy;
+    minVol = Math.min(minVol, mp.vol);
+  }
+
+  const revenue = rec.outputQty * op.sell;
+  const tax = geTax(op.sell) * rec.outputQty;
+  return {
+    recipeId: rec.id,
+    outputItemId: rec.outputItemId,
+    outputName: rec.outputName,
+    outputQty: rec.outputQty,
+    method: rec.facilities || rec.subject || "",
+    members: rec.members,
+    cost,
+    revenue,
+    tax,
+    profit: revenue - tax - cost,
+    outputVolume: op.vol,
+    minInputVolume: minVol === Infinity ? 0 : minVol,
+    inputs: rec.materials.map((m) => ({
+      itemId: m.itemId,
+      name: m.name,
+      qty: m.qty,
+      buy: (m.itemId != null ? price.get(m.itemId)?.buy : 0) ?? 0,
+    })),
+    skills: parseSkills(rec.skillsJson),
+  };
+}
+
 export async function getCraftRows(): Promise<CraftRow[] | null> {
   let board;
   try {
@@ -50,55 +104,24 @@ export async function getCraftRows(): Promise<CraftRow[] | null> {
   } catch {
     return null;
   }
-  const price = new Map<number, { buy: number; sell: number; vol: number }>();
-  for (const r of board.rows) price.set(r.itemId, { buy: r.buy, sell: r.sell, vol: r.hourlyVolume });
-
+  const price = priceMap(board);
   const recipes = await prisma.recipe.findMany({ include: { materials: true } });
-  const out: CraftRow[] = [];
+  const out = recipes.map((rec) => toCraftRow(rec, price)).filter((r): r is CraftRow => r !== null);
+  out.sort((a, b) => b.profit - a.profit);
+  return out;
+}
 
-  for (const rec of recipes) {
-    if (rec.outputItemId == null) continue;
-    if (rec.materials.length === 0) continue;
-    const op = price.get(rec.outputItemId);
-    if (!op || op.sell <= 0) continue;
-
-    let cost = 0;
-    let minVol = Infinity;
-    let priceable = true;
-    for (const m of rec.materials) {
-      if (m.itemId == null) { priceable = false; break; }
-      const mp = price.get(m.itemId);
-      if (!mp || mp.buy <= 0) { priceable = false; break; }
-      cost += m.qty * mp.buy;
-      minVol = Math.min(minVol, mp.vol);
-    }
-    if (!priceable) continue;
-
-    const revenue = rec.outputQty * op.sell;
-    const tax = geTax(op.sell) * rec.outputQty;
-    out.push({
-      recipeId: rec.id,
-      outputItemId: rec.outputItemId,
-      outputName: rec.outputName,
-      outputQty: rec.outputQty,
-      method: rec.facilities || rec.subject || "",
-      members: rec.members,
-      cost,
-      revenue,
-      tax,
-      profit: revenue - tax - cost,
-      outputVolume: op.vol,
-      minInputVolume: minVol === Infinity ? 0 : minVol,
-      inputs: rec.materials.map((m) => ({
-        itemId: m.itemId,
-        name: m.name,
-        qty: m.qty,
-        buy: (m.itemId != null ? price.get(m.itemId)?.buy : 0) ?? 0,
-      })),
-      skills: parseSkills(rec.skillsJson),
-    });
+/** Recipes that PRODUCE the given item (for the item page's "how to make it"). */
+export async function getCraftRowsForItem(id: number): Promise<CraftRow[]> {
+  let board;
+  try {
+    board = await getBoard();
+  } catch {
+    return [];
   }
-
+  const price = priceMap(board);
+  const recipes = await prisma.recipe.findMany({ where: { outputItemId: id }, include: { materials: true } });
+  const out = recipes.map((rec) => toCraftRow(rec, price)).filter((r): r is CraftRow => r !== null);
   out.sort((a, b) => b.profit - a.profit);
   return out;
 }

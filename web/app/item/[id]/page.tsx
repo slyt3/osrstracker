@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getBoardRow, getTimeseries, TIMESTEPS, type Timestep } from "@/lib/engine";
 import PriceChart from "@/components/PriceChart";
+import ItemRecipes from "@/components/ItemRecipes";
+import { getCraftRowsForItem } from "@/lib/craft";
 import { isLowLiquidity, LOW_VOLUME } from "@/lib/liquidity";
 
 export const revalidate = 60;
@@ -32,9 +34,10 @@ export default async function ItemPage({
     );
   }
 
-  const [row, series] = await Promise.all([
+  const [row, series, recipes] = await Promise.all([
     getBoardRow(id).catch(() => null),
     getTimeseries(id, range).catch(() => null),
+    getCraftRowsForItem(id).catch(() => []),
   ]);
 
   const name = row?.name ?? `Item #${id}`;
@@ -83,6 +86,8 @@ export default async function ItemPage({
             <p className="notice">Price history is unavailable right now. Try another range or come back shortly.</p>
           )}
         </div>
+
+        <ItemRecipes rows={recipes} />
       </div>
     </main>
   );
