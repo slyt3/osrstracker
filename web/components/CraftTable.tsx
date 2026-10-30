@@ -15,13 +15,24 @@ const gp = (n: number) => {
 };
 const signed = (n: number) => (n >= 0 ? "+" : "−") + fmt(Math.abs(n));
 
-type SortKey = "profit" | "outputVolume";
+type SortKey = "profit" | "outputVolume" | "cost" | "net" | "minInputVolume";
+const sortVal = (r: CraftRow, k: SortKey) => (k === "net" ? r.revenue - r.tax : (r[k] as number));
 
 // Skills the user can enter a level for; recipes needing another skill aren't gated.
 const SKILLS = ["Crafting", "Smithing", "Fletching", "Herblore", "Cooking", "Magic"] as const;
 
 export default function CraftTable({ rows }: { rows: CraftRow[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("profit");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const clickSort = (k: SortKey) => {
+    if (k === sortKey) setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    else { setSortKey(k); setSortDir("desc"); }
+  };
+  const th = (k: SortKey, label: string, title?: string) => (
+    <th className={"sortable" + (sortKey === k ? " active" : "")} onClick={() => clickSort(k)} title={title}>
+      {label}{sortKey === k ? (sortDir === "desc" ? " ▼" : " ▲") : ""}
+    </th>
+  );
   const [query, setQuery] = useState("");
   const [minProfit, setMinProfit] = useState<number>(1);
   const [minVol, setMinVol] = useState<number>(0);
@@ -62,10 +73,10 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
         (!onlyAfford || canAfford(r)) &&
         (!onlyMakeable || canMake(r)),
     );
-    out.sort((a, b) => b[sortKey] - a[sortKey]);
+    out.sort((a, b) => (sortDir === "desc" ? sortVal(b, sortKey) - sortVal(a, sortKey) : sortVal(a, sortKey) - sortVal(b, sortKey)));
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sortKey, query, minProfit, minVol, members, method, skill, onlyAfford, onlyMakeable, gold, levels]);
+  }, [rows, sortKey, sortDir, query, minProfit, minVol, members, method, skill, onlyAfford, onlyMakeable, gold, levels]);
 
   const shown = filtered.slice(0, MAX_ROWS);
 
@@ -121,11 +132,11 @@ export default function CraftTable({ rows }: { rows: CraftRow[] }) {
               <th className="left">Make &amp; recipe</th>
               <th className="left">Needs</th>
               <th className="left col-opt">Method</th>
-              <th>Cost</th>
-              <th>Sell (net)</th>
-              <th className={"sortable" + (sortKey === "profit" ? " active" : "")} onClick={() => setSortKey("profit")}>Profit {sortKey === "profit" ? "▼" : ""}</th>
-              <th className={"sortable" + (sortKey === "outputVolume" ? " active" : "")} onClick={() => setSortKey("outputVolume")} title="Units of the output traded per hour — how many players make/sell this">Sold /h {sortKey === "outputVolume" ? "▼" : ""}</th>
-              <th className="col-opt" title="Slowest ingredient to buy per hour — how fast you can actually source the materials">Inputs /h</th>
+              {th("cost", "Cost")}
+              {th("net", "Sell (net)")}
+              {th("profit", "Profit")}
+              {th("outputVolume", "Sold /h", "Units of the output traded per hour — how many players make/sell this")}
+              <th className={"sortable col-opt" + (sortKey === "minInputVolume" ? " active" : "")} onClick={() => clickSort("minInputVolume")} title="Slowest ingredient to buy per hour — how fast you can source the materials">Inputs /h{sortKey === "minInputVolume" ? (sortDir === "desc" ? " ▼" : " ▲") : ""}</th>
             </tr>
           </thead>
           <tbody>
