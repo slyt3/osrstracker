@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 const LINKS = [
+  { href: "/allocator", label: "Capital allocator" },
   { href: "/board", label: "Full board" },
   { href: "/items", label: "Items" },
   { href: "/craft", label: "Craft" },
