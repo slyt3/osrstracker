@@ -6,23 +6,37 @@
    ========================================================================== */
 
 :root {
-  --bg:      #100e09;
-  --panel:   #181410;
-  --panel-2: #201b14;
-  --line:    #2c2518;
-  --line-2:  #3c3221;
+  /* OSRS Grand Exchange UI: oiled wood, carved bronze, worn parchment, coin gold */
+  --bg:      #150f07;  /* dark oiled wood */
+  --bg-2:    #0e0a04;  /* recessed shadow */
+  --panel:   #241a0e;  /* wood panel */
+  --panel-2: #30230f;  /* raised wood */
+  --line:    #4a3419;  /* carved border */
+  --line-2:  #6b4b22;  /* lighter bevel edge */
 
-  --text:  #ece4d3;
-  --muted: #a99c84;
-  --faint: #776c58;
+  /* bevel edges for the inset "game UI" look */
+  --bevel-hi: #7a5729;  /* top / left highlight */
+  --bevel-lo: #0b0803;  /* bottom / right shadow */
 
-  --gold:   #e3a13a;  /* the single accent */
-  --gold-2: #f2c977;  /* highlight only */
-  --green:  #58bd63;
-  --red:    #dc5a40;
+  /* parchment surfaces (dark ink printed on them) */
+  --parch:   #ddcaa0;
+  --parch-2: #cbb57f;
+  --parch-line: #a98f5e;
+  --ink:   #241a0b;
+  --ink-2: #5a4524;
+
+  --text:  #f1e6cb;  /* warm bone on dark wood */
+  --muted: #bcab84;
+  --faint: #8c795a;
+
+  --gold:      #f3bb34;  /* RuneScape coin gold */
+  --gold-2:    #ffdd77;  /* highlight */
+  --gold-deep: #a9761a;  /* gold in shadow (for bevels) */
+  --green:  #5fab45;  /* worn members green */
+  --red:    #b5341f;  /* combat red */
 
   --maxw: 1080px;
-  --r: 10px;
+  --r: 6px;  /* OSRS corners are tight, not pill-soft */
 }
 
 /* --font-sans / --font-mono are provided by next/font on <html>. */
@@ -32,7 +46,14 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+  /* faint wood/parchment grain, built from gradients (no asset) + a top vignette */
+  background-image:
+    radial-gradient(1200px 500px at 50% -8%, rgba(243, 187, 52, 0.05), transparent 70%),
+    radial-gradient(rgba(255, 240, 200, 0.018) 1px, transparent 1px),
+    radial-gradient(rgba(0, 0, 0, 0.35) 1px, transparent 1px);
+  background-size: 100% 100%, 4px 4px, 3px 3px;
+  background-position: 0 0, 0 0, 1px 2px;
   color: var(--text);
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 16px;
@@ -44,12 +65,25 @@ body {
 a { color: var(--text); text-decoration: none; }
 a:hover { color: var(--gold-2); }
 
-h1, h2, h3 { font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; margin: 0; }
+h1, h2, h3 { line-height: 1.1; margin: 0; }
+/* display face: carved Roman capitals, the stone-inscription voice */
+h1, h2 { font-family: var(--font-display), Georgia, serif; font-weight: 600; letter-spacing: 0.005em; }
+h3 { font-family: var(--font-sans), system-ui, sans-serif; font-weight: 700; letter-spacing: -0.01em; }
 
 .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
-/* solid gold emphasis (no gradient) */
+/* flat solid gold emphasis */
 .hl { color: var(--gold); }
+
+/* struck-metal gold: a deliberate OSRS treatment, not a SaaS gradient — the
+   dark drop-shadow makes it read as engraved coin metal. Reserved for the mark
+   and the hero headline. */
+.metal {
+  background: linear-gradient(176deg, #ffe9a6 0%, #f3bb34 42%, #b9811d 54%, #f0c652 78%, #d79e2a 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
 
 /* numbers read as market data */
 .tnum, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
@@ -62,33 +96,66 @@ h1, h2, h3 { font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; margi
 }
 hr.rule { height: 1px; border: 0; background: var(--line); margin: 0; }
 
-/* ---------- buttons (flat) ---------- */
+/* ---------- buttons (carved, beveled) ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.68rem 1.15rem; border-radius: 7px; font: inherit; font-weight: 600; font-size: 0.95rem;
-  cursor: pointer; border: 1px solid transparent; transition: background 0.15s, border-color 0.15s, color 0.15s;
+  padding: 0.64rem 1.2rem; border-radius: var(--r); font: inherit; font-weight: 700; font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  cursor: pointer; border: 1px solid var(--bevel-lo);
+  transition: filter 0.14s, transform 0.05s, border-color 0.14s, color 0.14s, background 0.14s;
   white-space: nowrap;
 }
-.btn-gold { background: var(--gold); color: #211603; }
-.btn-gold:hover { background: var(--gold-2); color: #211603; }
-.btn-ghost { background: transparent; color: var(--text); border-color: var(--line-2); }
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold-2); }
+.btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: 0.5; cursor: default; }
 
-/* ---------- surfaces ---------- */
-.card, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+/* struck-gold button: metal face with a lit top edge and shadowed base */
+.btn-gold {
+  color: #2a1a02;
+  background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold) 46%, var(--gold-deep) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 248, 214, 0.75), inset 0 -2px 3px rgba(120, 78, 10, 0.5), 0 2px 0 var(--bevel-lo);
+  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.4);
+}
+.btn-gold:hover { filter: brightness(1.08); }
 
-/* ---------- header ---------- */
-.site-header { position: sticky; top: 0; z-index: 40; background: rgba(16, 14, 9, 0.9);
-  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.site-header .bar { display: flex; align-items: center; justify-content: space-between; height: 62px; }
-.nav { display: flex; align-items: center; gap: 1.6rem; }
-.nav a.link { color: var(--muted); font-weight: 500; font-size: 0.94rem; }
-.nav a.link:hover { color: var(--text); }
+/* carved stone/wood ghost button */
+.btn-ghost {
+  color: var(--text);
+  background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+  border-color: var(--line-2);
+  box-shadow: inset 0 1px 0 var(--bevel-hi), inset 0 -2px 2px rgba(0, 0, 0, 0.35);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold-2); }
 
-.wordmark { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.12rem; }
-.wordmark .wm-mark { color: var(--gold); flex: 0 0 auto; }
-.wordmark .wm-text { color: var(--text); letter-spacing: -0.01em; }
+/* ---------- surfaces (inset game-UI panels) ---------- */
+.card, .panel {
+  background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+  border: 1px solid var(--bevel-lo);
+  border-radius: var(--r);
+  box-shadow: inset 0 1px 0 var(--bevel-hi), inset 1px 0 0 rgba(122, 87, 41, 0.35),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- header (carved beam with a gold underline) ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 40;
+  background: linear-gradient(180deg, rgba(36, 26, 14, 0.96), rgba(21, 15, 7, 0.96));
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--gold-deep);
+  box-shadow: 0 2px 0 var(--bevel-lo), 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+.site-header .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.nav { display: flex; align-items: center; gap: 1.5rem; }
+.nav a.link { color: var(--muted); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.01em; }
+.nav a.link:hover { color: var(--gold-2); }
+
+.wordmark { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 1.24rem; }
+.wordmark .wm-mark { color: var(--gold); flex: 0 0 auto; filter: drop-shadow(0 1px 0 rgba(0,0,0,0.5)); }
+.wordmark .wm-text {
+  font-family: var(--font-display), Georgia, serif; font-weight: 700; letter-spacing: 0.02em;
+  background: linear-gradient(176deg, #ffe9a6 0%, #f3bb34 48%, #b9811d 58%, #e9c158 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.5));
+}
 
 /* ---------- footer ---------- */
 .site-footer { border-top: 1px solid var(--line); margin-top: 6rem; color: var(--muted); font-size: 0.9rem; }
@@ -100,14 +167,17 @@ hr.rule { height: 1px; border: 0; background: var(--line); margin: 0; }
 /* ---------- live terminal hero ---------- */
 .term { padding: 2.6rem 0 1rem; }
 
-/* status strip: reads like a market data feed header */
+/* status strip: a brass feed header across the top of the GE panel */
 .term-bar {
   display: flex; align-items: center; gap: 1rem;
   font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.04em;
   color: var(--faint); text-transform: lowercase;
-  border: 1px solid var(--line); border-bottom: 0;
+  border: 1px solid var(--bevel-lo); border-bottom: 0;
+  border-top: 2px solid var(--gold-deep);
   border-radius: var(--r) var(--r) 0 0;
-  background: var(--panel); padding: 0.55rem 0.95rem;
+  background: linear-gradient(180deg, #2c2011 0%, #1d1509 100%);
+  box-shadow: inset 0 1px 0 var(--bevel-hi);
+  padding: 0.6rem 0.95rem;
 }
 .term-live {
   display: inline-flex; align-items: center; gap: 0.45rem;
@@ -120,27 +190,58 @@ hr.rule { height: 1px; border: 0; background: var(--line); margin: 0; }
 .term-bar .blip.off { background: var(--red); animation: none; }
 .term-live:has(.blip.off) { color: var(--red); }
 @keyframes blip {
-  0% { box-shadow: 0 0 0 0 rgba(88,189,99,0.55); }
-  70% { box-shadow: 0 0 0 6px rgba(88,189,99,0); }
-  100% { box-shadow: 0 0 0 0 rgba(88,189,99,0); }
+  0% { box-shadow: 0 0 0 0 rgba(95, 171, 69, 0.6); }
+  70% { box-shadow: 0 0 0 6px rgba(95, 171, 69, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(95, 171, 69, 0); }
 }
 @media (prefers-reduced-motion: reduce) { .term-bar .blip { animation: none; } }
 .term-path { color: var(--muted); }
 .term-when { margin-left: auto; }
 .term-when .sep { color: var(--line-2); }
 
-/* the lede sits just under the status strip, left-aligned and tight */
+/* the lede sits just under the status strip — carved wood with riveted corners */
 .term-lede {
-  border: 1px solid var(--line); border-bottom: 0;
-  background: var(--panel); padding: 2rem 1.6rem 1.8rem;
+  position: relative;
+  border-left: 1px solid var(--bevel-lo); border-right: 1px solid var(--bevel-lo);
+  background: linear-gradient(180deg, var(--panel-2) 0%, var(--panel) 100%);
+  box-shadow: inset 1px 0 0 rgba(122, 87, 41, 0.3), inset -1px 0 0 rgba(0, 0, 0, 0.4);
+  padding: 2.3rem 2rem 2rem;
 }
-.term-lede h1 { font-size: clamp(2rem, 4.6vw, 3.1rem); max-width: 18ch; }
-.term-lede p { color: var(--muted); max-width: 60ch; margin: 1rem 0 1.6rem; font-size: 1.02rem; }
+/* four brass rivets, one per corner — the OSRS panel tell */
+.term-lede::before, .term-lede::after,
+.term-board::before, .term-board::after {
+  content: ""; position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--gold-2), var(--gold-deep) 70%, #5a3d0e);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.6); z-index: 2;
+}
+.term-lede::before { top: 10px; left: 10px; }
+.term-lede::after  { top: 10px; right: 10px; }
 
-/* the board is the centrepiece — flush against the lede, no rounded top */
-.term-board { border-radius: 0 0 var(--r) var(--r); border-top: 0; }
+.term-lede h1 {
+  font-size: clamp(2.1rem, 5vw, 3.4rem); max-width: 16ch; line-height: 1.04;
+  color: var(--text); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+/* the key phrase, struck in coin-gold */
+.term-lede h1 .hl {
+  background: linear-gradient(176deg, #ffe9a6 0%, #f3bb34 42%, #b9811d 54%, #f0c652 78%, #d79e2a 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.55));
+}
+.term-lede p { color: var(--muted); max-width: 60ch; margin: 1.1rem 0 1.7rem; font-size: 1.04rem; }
+
+/* the board is the centrepiece — flush against the lede, gold base frame */
+.term-board {
+  position: relative;
+  border-radius: 0 0 var(--r) var(--r); border-top: 0;
+  border: 1px solid var(--bevel-lo); border-top: 0;
+  border-bottom: 2px solid var(--gold-deep);
+}
+.term-board::before { bottom: 10px; left: 10px; }
+.term-board::after  { bottom: 10px; right: 10px; }
 .term-board table.board { font-size: 0.95rem; }
-.term-board thead th { background: var(--panel-2); }
+.term-board thead th { background: linear-gradient(180deg, #2c2011, #1d1509); color: var(--gold); }
 .term-warming { color: var(--faint); padding: 2.2rem 0.85rem; text-align: left; }
 
 .term-foot {
@@ -149,20 +250,27 @@ hr.rule { height: 1px; border: 0; background: var(--line); margin: 0; }
 }
 
 /* ---------- honest two-column "does / doesn't" ---------- */
-.honest { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
-.hon-col { padding: 1.7rem 1.6rem; }
-.hon-col + .hon-col { border-left: 1px solid var(--line); }
+.honest {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--bevel-lo); border-radius: var(--r); overflow: hidden;
+  box-shadow: inset 0 1px 0 var(--bevel-hi), 0 2px 6px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+}
+.hon-col { padding: 1.8rem 1.7rem; border-top: 3px solid transparent; }
+.hon-col.does { border-top-color: var(--green); }
+.hon-col.doesnt { border-top-color: var(--red); }
+.hon-col + .hon-col { border-left: 1px solid var(--bevel-lo); box-shadow: inset 1px 0 0 rgba(122, 87, 41, 0.3); }
 .hon-col h3 {
-  font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
-  font-weight: 600; margin-bottom: 1.1rem;
+  font-family: var(--font-display), serif; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 700; margin-bottom: 1.1rem;
 }
 .hon-col.does h3 { color: var(--green); }
-.hon-col.doesnt h3 { color: var(--muted); }
+.hon-col.doesnt h3 { color: var(--red); }
 .hon-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
 .hon-col li { position: relative; padding-left: 1.4rem; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
 .hon-col li::before { position: absolute; left: 0; top: 0; font-family: var(--font-mono); font-weight: 700; }
 .hon-col.does li::before { content: "+"; color: var(--green); }
-.hon-col.doesnt li::before { content: "−"; color: var(--faint); }
+.hon-col.doesnt li::before { content: "−"; color: var(--red); }
 
 /* ---------- sections ---------- */
 section { padding: 3.5rem 0; }
@@ -170,16 +278,31 @@ section { padding: 3.5rem 0; }
 .section-head h2 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); }
 .section-head p { color: var(--muted); margin: 0.6rem 0 0; max-width: 54ch; }
 
-/* tax panel */
-.tax { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2.2rem; align-items: center; padding: 2.2rem; }
-.formula { font-family: var(--font-mono); font-size: 0.9rem; line-height: 2.1; color: var(--muted);
-  background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 1.1rem 1.3rem; }
-.formula b { color: var(--gold-2); font-weight: 400; }
+/* tax panel — a merchant's parchment ledger: dark ink on aged paper */
+.tax {
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2.2rem; align-items: center; padding: 2.4rem;
+  color: var(--ink);
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(60% 50% at 85% 110%, rgba(120, 92, 48, 0.28), transparent 70%),
+    linear-gradient(180deg, var(--parch) 0%, var(--parch-2) 100%);
+  border: 1px solid var(--parch-line);
+  box-shadow: inset 0 0 44px rgba(120, 85, 36, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 3px 10px rgba(0, 0, 0, 0.45);
+}
+.tax .eyebrow { color: var(--ink-2); }
+.tax h2 { color: var(--ink); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35); }
+.tax p { color: var(--ink-2) !important; }
+.formula {
+  font-family: var(--font-mono); font-size: 0.92rem; line-height: 2.1; color: var(--ink);
+  background: rgba(255, 252, 243, 0.5); border: 1px solid var(--parch-line); border-radius: 5px;
+  padding: 1.1rem 1.3rem; box-shadow: inset 0 1px 4px rgba(120, 85, 36, 0.25);
+}
+.formula b { color: #7a4e10; font-weight: 700; }
 
 /* ---------- pricing ---------- */
 .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; max-width: 760px; margin: 0 auto; }
 .plan { padding: 1.8rem; }
-.plan.pro { border-color: var(--line-2); }
+.plan.pro { border-color: var(--gold-deep); box-shadow: inset 0 1px 0 var(--gold-2), inset 0 0 0 1px rgba(243, 187, 52, 0.15), 0 3px 10px rgba(0, 0, 0, 0.4); }
 .plan .ptop { display: flex; align-items: center; justify-content: space-between; }
 .plan .tier { font-weight: 600; font-size: 1.05rem; }
 .plan .rec { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); }
@@ -207,19 +330,24 @@ section { padding: 3.5rem 0; }
 .controls input:focus, .controls select:focus { outline: none; border-color: var(--gold); }
 
 .meta { font-size: 0.82rem; color: var(--faint); margin: 0.4rem 0 1rem; }
-.board-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); }
+.board-scroll { overflow-x: auto; border: 1px solid var(--bevel-lo); border-radius: var(--r);
+  box-shadow: inset 0 1px 0 var(--bevel-hi); }
 table.board { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
-table.board th, table.board td { padding: 0.55rem 0.85rem; text-align: right; white-space: nowrap; }
+table.board th, table.board td { padding: 0.58rem 0.85rem; text-align: right; white-space: nowrap; }
 table.board th.left, table.board td.left { text-align: left; }
 table.board td.tnum, table.board td.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-table.board thead th { position: sticky; top: 0; background: var(--panel); color: var(--faint);
-  border-bottom: 1px solid var(--line-2); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+table.board thead th { position: sticky; top: 0; background: linear-gradient(180deg, #2c2011, #1d1509); color: var(--gold);
+  border-bottom: 2px solid var(--gold-deep); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  box-shadow: inset 0 1px 0 var(--bevel-hi); }
 table.board th.sortable { cursor: pointer; user-select: none; }
-table.board th.active { color: var(--gold); }
+table.board th.sortable:hover { color: var(--gold-2); }
+table.board th.active { color: var(--gold-2); }
+/* ledger ruling: alternating warm rows */
 table.board tbody tr { border-bottom: 1px solid var(--line); }
+table.board tbody tr:nth-child(even) { background: rgba(122, 87, 41, 0.06); }
 table.board tbody tr:last-child { border-bottom: 0; }
-table.board tbody tr:hover { background: var(--panel); }
-table.board td a { font-weight: 500; }
+table.board tbody tr:hover { background: rgba(243, 187, 52, 0.09); }
+table.board td a { font-weight: 600; }
 table.board td a:hover { color: var(--gold-2); }
 
 .notice { background: var(--panel); border: 1px solid var(--line-2); color: var(--muted);
