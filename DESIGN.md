@@ -1,226 +1,234 @@
 ---
 name: OSRS Tracker
-description: A live Grand Exchange flip terminal in cool graphite with one flat signal accent.
+description: A live Grand Exchange flip terminal on warm sand paper, moss and fired clay, with hand-cut irregular corners.
 colors:
-  bg: "#0e0f12"
-  bg-2: "#0a0b0d"
-  panel: "#15171b"
-  panel-2: "#1a1d22"
-  line: "#22262b"
-  line-2: "#2f343b"
-  text: "#f4f6f8"
-  muted: "#9aa2ad"
-  faint: "#626a75"
-  gain: "#27e07a"
-  gain-2: "#5cf0a0"
-  gain-dim: "#1c7d4b"
-  loss: "#ff5c5c"
-  ink-on-accent: "#04140b"
+  ground: "#eee6d6"
+  surface: "#f5eddf"
+  surface-muted: "#ddd5c3"
+  ink: "#29251d"
+  ink-muted: "#443b2f"
+  faint: "#6f6450"
+  line: "#d9ceb7"
+  line-2: "#c6b99d"
+  primary: "#35422d"
+  field: "#694737"
+  art-accent: "#ad7d62"
+  highlight: "#b9b28b"
+  loss: "#a2432a"
+  on-field: "#f1ead9"
+  on-field-muted: "#cdc2a4"
 typography:
   display:
-    fontFamily: "Geist, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(2.4rem, 5.6vw, 4rem)"
+    fontFamily: "Source Serif 4, Georgia, serif"
+    fontSize: "clamp(46px, 6vw, 70px)"
     fontWeight: 600
-    lineHeight: 1.0
-    letterSpacing: "-0.035em"
+    lineHeight: 1.02
+    letterSpacing: "-0.02em"
   headline:
-    fontFamily: "Geist, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(1.8rem, 3.6vw, 2.5rem)"
+    fontFamily: "Source Serif 4, Georgia, serif"
+    fontSize: "clamp(1.9rem, 3.6vw, 2.6rem)"
     fontWeight: 600
     lineHeight: 1.05
-    letterSpacing: "-0.03em"
-  title:
-    fontFamily: "Geist, system-ui, -apple-system, sans-serif"
-    fontSize: "1.1rem"
-    fontWeight: 600
-    lineHeight: 1.2
     letterSpacing: "-0.015em"
+  title:
+    fontFamily: "Source Serif 4, Georgia, serif"
+    fontSize: "1.25rem"
+    fontWeight: 600
+    lineHeight: 1.18
+    letterSpacing: "-0.01em"
   body:
-    fontFamily: "Geist, system-ui, -apple-system, sans-serif"
+    fontFamily: "Instrument Sans, Helvetica Neue, sans-serif"
     fontSize: "16px"
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.8
     letterSpacing: "normal"
   figure:
-    fontFamily: "Geist Mono, ui-monospace, monospace"
+    fontFamily: "Instrument Sans, Helvetica Neue, sans-serif"
     fontSize: "0.94rem"
     fontWeight: 400
     lineHeight: 1.6
-    letterSpacing: "-0.02em"
+    letterSpacing: "-0.01em"
     fontFeature: "tabular-nums"
   label:
-    fontFamily: "Geist Mono, ui-monospace, monospace"
-    fontSize: "0.68rem"
-    fontWeight: 500
-    lineHeight: 1.6
+    fontFamily: "Instrument Sans, Helvetica Neue, sans-serif"
+    fontSize: "12px"
+    fontWeight: 600
+    lineHeight: 1.4
     letterSpacing: "0"
 rounded:
-  md: "10px"
-  sm: "7px"
-  xs: "4px"
+  sheet: "30px 22px 34px 20px / 24px 30px 22px 34px"
+  control: "27px 19px 29px 16px / 22px 26px 19px 29px"
+  field: "16px 12px 18px 11px"
+  tag: "8px 5px 9px 4px"
 spacing:
+  content-gap: "24px"
   container: "24px"
-  sm: "0.85rem"
-  md: "1.3rem"
-  lg: "2rem"
-  xl: "2.6rem"
-  section: "4.2rem"
+  section: "4.4rem"
 components:
   button-primary:
-    backgroundColor: "{colors.gain}"
-    textColor: "{colors.ink-on-accent}"
-    rounded: "{rounded.sm}"
-    padding: "0.62rem 1.15rem"
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-field}"
+    rounded: "{rounded.control}"
+    padding: "0.7rem 1.3rem"
   button-primary-hover:
-    backgroundColor: "{colors.gain-2}"
-    textColor: "{colors.ink-on-accent}"
+    backgroundColor: "#40502f"
+    textColor: "{colors.on-field}"
   button-ghost:
     backgroundColor: "transparent"
-    textColor: "{colors.text}"
-    rounded: "{rounded.sm}"
-    padding: "0.62rem 1.15rem"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    padding: "0.7rem 1.3rem"
   button-ghost-hover:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.text}"
+    backgroundColor: "{colors.surface-muted}"
+    textColor: "{colors.ink}"
   card:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.text}"
-    rounded: "{rounded.md}"
-    padding: "2rem"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.sheet}"
+    padding: "2.1rem"
   input:
-    backgroundColor: "{colors.bg-2}"
-    textColor: "{colors.text}"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
     typography: "{typography.figure}"
-    rounded: "{rounded.sm}"
-    padding: "0.5rem 0.65rem"
+    rounded: "{rounded.field}"
+    padding: "0.55rem 0.7rem"
 ---
 
 # Design System: OSRS Tracker
 
 ## Overview
 
-**Creative North Star: "Graphite & Signal"**
+**Creative North Star: "The Worktable"**
 
-OSRS Tracker is a cool, flat market terminal. The ground is a deliberately un-warm graphite (#0e0f12) — slate, not stone — carrying near-white type on hairline structure. There are no bevels, no glow, no gradients-as-decoration and no gold: the owner read every warm/parchment/carved-stone treatment as "AI slop" and rejected it. What remains is a quiet, dense surface where the only color is a single flat signal — green means gain, red means loss — and everything else is modelled in weight, scale and a 1px line.
+OSRS Tracker is a shared worktable of sand-colored paper. The ground is a warm sand (#eee6d6) carrying a faint, continuous paper grain — authored feTurbulence noise, not a grid — and the working surfaces are slightly lighter paper sheets (#f5eddf) with dark-brown ink (#29251d). It is a light, earthen room: moss green, fired clay and terracotta do the colored work, and every sheet and control is cut with irregular, hand-made corners so nothing reads as a machine-stamped card. Figures stay legible as ink on paper; the loud, data-dense moments (the honest ledger, the tax arithmetic, the Pro plan) are laid onto flat earth fields of moss or clay with light ink floated on top.
 
-The system runs on one accent economy. Green (#27e07a) is the live, positive signal; red (#ff5c5c) is the only second voice, reserved for loss. There is no third hue, no blue, no status palette, no decorative tint. Depth is not expressed by shadow — surfaces are flat panels edged by hairlines, and elevation reads as a change of ground tone (#0e0f12 → #15171b → #1a1d22), never as a floating card. The result reads unmistakably even with content stripped: a graphite field, near-white figures, hairline rules, and green/red numbers that mean exactly what they say.
+The palette is a single earth family. Moss (#35422d) is the primary — the voice of action and of realized gain; fired clay (#694737) and terracotta (#ad7d62) are the warm secondaries that carry emphasis and drawn marks; dried-grass (#b9b28b) is a quiet highlight inside the dark fields; and a single earthy brick (#a2432a) is the one loss/alarm color on the trading board. There is no gold, no bevel, no glow, no gradient-as-decoration — the warmth comes from pigment and paper, not from shine. The result reads unmistakably even with content stripped: a grainy sand field, irregular paper sheets edged by warm hairlines, serif statements, and calm moss/clay basins of data.
 
-The voice is blunt and the surface is instrumental. Nothing is ornamental, nothing floats, nothing fades up. The accent is scarce enough that when a figure turns full green it carries meaning — a real, fillable profit — rather than decoration.
+The voice is blunt and the surface is tactile but quiet. Motion is a single 240ms interaction response; nothing floats far, nothing fades up in sequence. Source Serif 4 makes the statements and headings; Instrument Sans does all the reading, controls and — with tabular numerals — every market figure. The system has no monospace: precision is carried by tabular Instrument Sans, not by a code face.
 
 **Key Characteristics:**
-- Cool graphite ground (#0e0f12), deliberately not warm; recessed and raised tones layer without shadow.
-- One flat signal accent: green = gain, red = loss. No gold, no third hue, no status palette.
-- 1px hairline borders carry all structure; surfaces are flat, never floated on a grey shadow.
-- Hierarchy from weight and scale, not uppercase tracking, color noise or ornament.
-- Geist for everything typeset; Geist Mono for every market figure (tabular-nums). Soft-square 10px corners.
+- Warm sand ground (#eee6d6) with a faint authored paper grain; lighter paper sheets (#f5eddf) carry dark-brown ink.
+- One earth family: moss primary, fired-clay and terracotta secondaries, dried-grass highlight, brick for loss. No gold, no glow, no gradient.
+- Irregular hand-cut corners via asymmetric border-radius on every sheet and control; no uniform radius.
+- Data-dense sections sit on flat earth fields (moss basin, clay field, moss card) with light ink on top.
+- Source Serif 4 for display/headings; Instrument Sans for reading, controls and tabular figures. No monospace.
 
 ## Colors
 
-A cool graphite neutral field carrying one flat accent in two charges — gain-green and loss-red — over a near-white text ramp. Hue never wanders outside green, red and neutral graphite.
+A single warm-earth family over sand paper: moss and clay do the colored work, brick is the one alarm, and everything structural is paper, stone and dark-brown ink.
 
 ### Primary
-- **Signal Green** (#27e07a): The one carried color — the live/positive signal. Primary button fill, active and sort-active states, link hover, the LIVE blip, watchlist star, focus ring, and a fully realised (real + liquid) profit figure.
-- **Bright Green** (#5cf0a0): The lit edge of the signal — primary button hover only.
-- **Dim Green** (#1c7d4b): Un-proven gain — a profit figure that is positive but not yet proven liquid, and the Pro-plan border/inset ring. The same signal, held back until it earns full charge.
+- **Moss** (#35422d): The primary voice — primary button fill, links, active/sorted states, focus ring, the LIVE blip, the watchlist star, realized-gain figures, and the full-bleed fields behind the tax arithmetic and the Pro plan. The color of action and of profit.
 
 ### Secondary
-- **Loss Red** (#ff5c5c): The only second voice. Losses, the OFFLINE blip, the "what it doesn't" column, form errors, the low-liquidity flag and its warning note. Never decorative.
+- **Fired Clay** (#694737): The deep warm emphasis — the highlighted phrase in the hero (`.hl`), link hover, and the flat field behind the honest "what it does / doesn't" ledger.
+- **Terracotta** (#ad7d62): The art-accent — drawn marks (the hollow "doesn't" ring on the ledger) and warm decorative detail. Used sparingly as warmth, never as data.
+
+### Tertiary
+- **Dried Grass** (#b9b28b): A muted highlight used only inside the dark earth fields — the filled "does" mark on the ledger, emphasized terms in the moss formula, and the Pro-plan accents. The light-field counterpart to moss.
 
 ### Neutral
-- **Graphite Ground** (#0e0f12) / **Recessed Graphite** (#0a0b0d): Body background, and the darker ground for inputs and sunk formulae.
-- **Panel** (#15171b) / **Raised Panel** (#1a1d22): Flat card/panel faces, and the lifted tone for table headers and hovered rows.
-- **Hairline** (#22262b) / **Strong Hairline** (#2f343b): The 1px structural line between rows, panel edges, and the heavier stroke on input borders and control groups.
-- **Near-White** (#f4f6f8): Primary heading and body text.
-- **Muted** (#9aa2ad) / **Faint** (#626a75): Subcopy and nav links, and the faintest labels / de-emphasized figures (tax, metadata).
-- **Ink on Accent** (#04140b): The near-black green-black used for text sitting on a solid green fill (primary button, active range tab).
+- **Sand Ground** (#eee6d6): The body background, carrying the faint paper grain; also the recessed ground inside the journal form and hovered table rows.
+- **Paper Surface** (#f5eddf): The working sheets — cards, panels, the board frame, header, inputs, tooltips.
+- **Stone (Surface-Muted)** (#ddd5c3): Table header bands, the footer band, and the ghost-button hover fill.
+- **Dark-Brown Ink** (#29251d) / **Ink-Muted** (#443b2f): Headings and body ink, and the softer brown for subcopy, nav links and secondary figures.
+- **Faint** (#6f6450): The quietest labels, captions, metadata and tax figures.
+- **Warm Hairline** (#d9ceb7) / **Strong Hairline** (#c6b99d): The 1px structural lines — row rules and sheet edges, and the heavier stroke on input borders and control groups.
+- **On-Field Ink** (#f1ead9) / **On-Field Muted** (#cdc2a4): The light paper-inks used for text sitting on the dark moss/clay fields (ledger, tax basin, Pro card, primary button).
+
+### Loss
+- **Brick** (#a2432a): The one alarm color — losses (`.neg`), the OFFLINE blip, the low-liquidity flag and its warning note, and form errors. Added to the earth family specifically for the trading board. Never decorative.
 
 ### Named Rules
-**The One Signal Rule.** Color is spent only as signal: green for gain, red for loss. Nothing else on the screen carries a hue — no blue, no gold, no tinted panels, no decorative accent. Everything else is graphite, hairline and near-white, and emphasis is bought with weight and scale, never with color.
+**The One Earth Family Rule.** Every hue on the screen is sand, paper, stone, moss, clay, terracotta, dried-grass or brick. No color enters from outside the earth family — no blue, no gold, no purple, no status palette. Emphasis is bought with pigment weight (moss vs. clay) and with placing data on a flat field, not with a foreign accent.
 
-**The Lit-Means-Liquid Rule.** A profit figure shows full Signal Green (#27e07a, `.pos.lit`) only when it is both real and liquid/fillable; a positive-but-unproven profit stays Dim Green (#1c7d4b, `.pos`); a loss is red (`.neg`). Full green is a claim about fillability, not merely about sign.
+**The Paper-and-Field Rule.** Dark-brown ink lives on paper; light on-field inks (#f1ead9 / #cdc2a4) live on the dark moss/clay fields. Text color is chosen by its ground, never mixed — never dark ink on moss, never light ink on paper.
 
 ## Typography
 
-**Display / Body / UI Font:** Geist (with system-ui, -apple-system, sans-serif) — a clean modern grotesk that carries headlines, body and UI alike; weight does the hierarchy.
-**Figure / Label Font:** Geist Mono (with ui-monospace, monospace) — tabular numerals for all market data.
+**Display / Heading Font:** Source Serif 4 (with Georgia, serif) — loaded on `--font-display`.
+**Reading / Control / Figure Font:** Instrument Sans (with Helvetica Neue, sans-serif) — loaded on `--font-sans`.
 
-**Character:** Neutral, precise, contemporary. A single grotesk family does the typesetting so the interface reads as one instrument; the mono is reserved so every price, ROI and volume reads as real, machine-exact market data.
+**Character:** A serif-and-sans pair where the serif speaks and the sans works. Source Serif 4 carries headlines and statements at weight 600 with tight negative tracking, giving the worktable its calm editorial authority; Instrument Sans reads long copy at a generous 1.8 line-height and, with tabular numerals, renders every price, margin, ROI and volume as exact market data.
 
 ### Hierarchy
-- **Display** (Geist 600, clamp(2.4rem, 5.6vw, 4rem), line-height 1.0, letter-spacing -0.035em): The landing hero headline; the key phrase set in Signal Green. Max ~15ch.
-- **Headline** (Geist 600, clamp(1.8rem, 3.6vw, 2.5rem), line-height 1.05, letter-spacing -0.03em): Section headings.
-- **Title** (Geist 600, ~1.1rem, line-height 1.2, letter-spacing -0.015em): Panel and column titles, plan tiers.
-- **Body** (Geist 400, 16px base — 1.1rem for the hero lede, line-height 1.6): Prose and subcopy; constrained to ~58ch.
-- **Figure** (Geist Mono 400, 0.94rem, tabular-nums, letter-spacing -0.02em): Every gp value, ROI, volume, price and the tax formula.
-- **Label** (Geist Mono 500, 0.68rem, letter-spacing 0, no transform): Field labels, table headers, the feed strip and metadata. Lowercase/sentence case — never tracked-out caps.
+- **Display** (Source Serif 4 600, clamp(46px, 6vw, 70px), line-height 1.02, letter-spacing -0.02em): The landing hero headline; the emphasized phrase set in Fired Clay. Max ~15ch.
+- **Headline** (Source Serif 4 600, clamp(1.9rem, 3.6vw, 2.6rem), line-height 1.05, letter-spacing -0.015em): Section headings and page heads.
+- **Title** (Source Serif 4 600, ~1.25rem, line-height 1.18, letter-spacing -0.01em): Panel/column titles, plan tiers, the wordmark, and item stat values.
+- **Body** (Instrument Sans 400, 16px base — 1.1rem for the hero lede, line-height 1.8): Prose and subcopy; constrained to ~56–58ch.
+- **Figure** (Instrument Sans 400, ~0.94rem, tabular-nums, letter-spacing -0.01em): Every gp value, margin, ROI, price, volume and the tax formula (`.tnum` / `.mono`).
+- **Label** (Instrument Sans 600, 12px metadata — 13px caption, letter-spacing 0, no transform): Field labels, table headers, the feed strip and metadata. Sentence case — never tracked-out caps.
 
 ### Named Rules
-**The Weight-Not-Decoration Rule.** Emphasis comes from weight (500/600) and scale, not from uppercase tracking, color or ornament. There is no all-caps eyebrow device: labels are quiet mono at letter-spacing 0, and a heading is never preceded by a tracked-out kicker.
+**The Serif-Statement Rule.** Source Serif 4 is reserved for statements — display, headlines, titles, stat values, the wordmark. Everything read or operated (body, controls, labels) is Instrument Sans. A heading is never set in the sans; running copy is never set in the serif.
 
-**The Tabular-Figures Rule.** Every number sourced from the market feed is set in Geist Mono with `tabular-nums`. Figures never use the sans UI face; prose never uses the mono.
+**The Tabular-Not-Mono Rule.** The system has no monospace. Every market figure is Instrument Sans with `font-variant-numeric: tabular-nums` and a slight -0.01em tightening; figures never adopt a code face, and prose never borrows the tabular treatment.
 
 ## Layout
 
-Centered single-column measure, max-width 1120px, 24px side padding. Sections breathe at ~4.2rem vertical; the hero terminal runs tighter (3.2rem top). The landing signature is a three-piece stack reading as one unit: a mono status strip (rounded top corners only) sits flush atop the inscription lede, which sits flush atop the live board (rounded bottom corners only) — joined by shared hairline edges so the seams disappear. Two-column grids (honest ledger, tax panel, pricing) collapse to a single column at 820px, with the dividing border rotating from a left edge to a top edge. The dense board sheds its optional columns (`.col-opt`) and tightens cell padding at 760px rather than only scrolling horizontally. Must hold down to 360px. Rhythm is in rem (0.85 / 1.3 / 2 / 2.6 / 4.2).
+Centered single-column measure, max-width 1120px, 24px side padding (`--dp-spacing-content-gap`). Sections breathe at ~4.4rem vertical; the hero terminal runs tighter (3.4rem top). The landing signature is a three-piece stack reading as one worktable slab: a sans caption strip (top corners rounded 24px/20px only) sits flush atop the serif statement lede, which sits flush atop the live board (bottom corners taking the control radius) — joined by shared warm hairline edges so the seams disappear. Two-column grids (the honest ledger, the tax basin, pricing) collapse to a single column at 820px, with the dividing border rotating from a left edge to a top edge. The dense board sheds its optional columns (`.col-opt`) and tightens cell padding at 760px rather than only scrolling. Must hold down to 360px. Rhythm is in rem (roughly 0.7 / 1.3 / 2.1 / 2.8 / 4.4).
 
 ## Elevation & Depth
 
-This system is flat. There is no resting drop-shadow vocabulary: surfaces do not float. Depth is conveyed entirely by tonal layering of the graphite ground (recessed #0a0b0d → ground #0e0f12 → panel #15171b → raised #1a1d22) and by 1px hairline borders that draw structure. The only shadows in the build are functional, not elevation: a focus/validation ring on inputs, an inner accent ring on the recommended pricing plan, and the chart tooltip's cast. State is shown by tone and border shift, not by lift.
+This system is nearly flat, with one faint resting lift. Paper sheets (cards, panels) carry a single soft shadow — `0 2px 10px rgba(41,37,29,0.06)` — reading as a sheet resting on the sand, not a floated card. The data fields (honest ledger, tax basin, Pro plan) are fully flat full-bleed earth, no shadow at all. Depth otherwise comes from the paper grain, the warm 1px hairlines, and a change of ground tone (sand #eee6d6 → paper #f5eddf → stone #ddd5c3). Shadows beyond the sheet-lift are functional only: a focus/validation ring on inputs and a soft cast under the transient chart tooltip.
 
 ### Shadow Vocabulary
-- **Focus ring** (`box-shadow: 0 0 0 2px rgba(39,224,122,0.2)`, paired with a Signal-Green border): Inputs and selects on focus. Not elevation — a focus affordance.
-- **Pro accent ring** (`box-shadow: inset 0 0 0 1px rgba(39,224,122,0.18)`, with a Dim-Green border): The recommended pricing plan only.
-- **Tooltip cast** (`box-shadow: 0 8px 24px rgba(0,0,0,0.5)`): The price-chart tooltip only — a transient overlay, the single place a soft cast is allowed.
+- **Sheet lift** (`box-shadow: 0 2px 10px rgba(41,37,29,0.06)`): Resting cards and panels — a faint paper lift, not a floating elevation. The only ambient shadow in the system.
+- **Focus ring** (`box-shadow: 0 0 0 2px rgba(53,66,45,0.18)`, paired with a Moss border): Inputs and selects on focus — a focus affordance, not elevation.
+- **Tooltip cast** (`box-shadow: 0 6px 18px rgba(41,37,29,0.14)`): The price-chart tooltip only — a transient overlay.
 
 ### Named Rules
-**The Flat-By-Default Rule.** Surfaces are flat at rest and separated by a 1px hairline, never by a shadow. A soft grey drop-shadow under a card is forbidden; if two surfaces must read apart, change the ground tone or draw a hairline. Shadows appear only as a focus ring, an accent ring, or a transient tooltip.
+**The Paper-Lift Rule.** A resting sheet gets at most the single faint paper lift (`0 2px 10px rgba(41,37,29,0.06)`); flat earth fields get none. No heavy grey drop-shadow, no stacked elevation layers. If two surfaces must read apart, change the ground tone or draw a warm hairline.
 
 ## Shapes
 
-Modern soft-square. The corner radius is a restrained 10px (`--r`) on panels, cards, the board frame, header pills and notices; 7px (`--r-sm`) on controls (buttons, inputs, range toggles); 4px on small tags and the focus outline. The stacked terminal rounds only its outer corners (status strip top, board bottom) so the three pieces read as one slab. Borders are structural and always 1px — Hairline (#22262b) for dividers and panel edges, Strong Hairline (#2f343b) for input strokes and control groups. Form language is orthogonal and quiet: no pills, no large radii, no organic curves, no bevels.
+Hand-cut irregular corners are the signature. Every sheet and control uses an asymmetric four-value border-radius, never a uniform corner: sheets take `--dp-radius-sheet` (30px 22px 34px 20px / 24px 30px 22px 34px), controls (buttons, the board frame, notices, range toggles) take `--dp-radius-control` (27px 19px 29px 16px / 22px 26px 19px 29px), form inputs take a smaller irregular `16px 12px 18px 11px`, and small tags take `8px 5px 9px 4px`. Borders are structural and 1px — Warm Hairline (#d9ceb7) for row rules and sheet edges, Strong Hairline (#c6b99d) for input strokes and control groups. Drawn list marks are organic blobs, not glyphs: the "does" mark is a filled dried-grass pebble (`border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%`), the "doesn't" mark a hollow terracotta ring. Form language is soft, warm and irregular; there are no sharp 0-radius corners and no perfectly symmetric pills.
 
 ## Components
 
 ### Buttons
-Flat keys; hierarchy from fill vs. hairline. All buttons are Geist 600, 0.94rem, 7px radius, `0.62rem 1.15rem` padding, 1px border, with a `translateY(1px)` press on `:active` and 0.45 opacity when disabled.
-- **Primary (`btn-gold`):** Solid Signal Green (#27e07a) fill with Ink-on-Accent (#04140b) text — the one solid-color control. Hover brightens the fill to Bright Green (#5cf0a0).
-- **Ghost (secondary):** Transparent with a Strong-Hairline border and near-white text. Hover shifts the border to near-white and fills with Panel (#15171b).
-- **Focus:** Global 2px solid Signal-Green outline, 2px offset.
+Softly rounded moss keys with organic corners; hierarchy from fill vs. hairline. All buttons are Instrument Sans 600, 14px, `--dp-radius-control`, `0.7rem 1.3rem` padding, 1px border, with a `scale(0.97)` press on `:active` and 0.5 opacity when disabled. Motion is 240ms ease and is disabled under `prefers-reduced-motion`.
+- **Primary (`btn-gold`):** Solid Moss (#35422d) fill with On-Field (#f1ead9) ink — the one solid-color control. Hover deepens the fill to #40502f. (Class name is legacy; the fill is moss, not gold — see not-canonized.)
+- **Ghost (secondary):** Transparent with a Strong-Hairline border and dark-brown ink. Hover fills with Stone (#ddd5c3) and shifts the border to Fired Clay.
+- **Focus:** Global 2px solid Moss outline, 3px offset.
 
 ### Cards / Containers
-- **Corner Style:** Soft-square (10px).
-- **Background:** Flat Panel (#15171b).
-- **Shadow Strategy:** None — flat, per the Flat-By-Default Rule.
-- **Border:** 1px Hairline (#22262b).
-- **Internal Padding:** 2rem (`lg`); dense panels 2.6rem (`xl`).
+- **Corner Style:** Irregular hand-cut sheet (`--dp-radius-sheet`).
+- **Background:** Paper Surface (#f5eddf).
+- **Shadow Strategy:** The single faint Sheet-Lift (`0 2px 10px rgba(41,37,29,0.06)`); flat earth-field panels (tax basin, Pro plan) carry none.
+- **Border:** 1px Warm Hairline (#d9ceb7).
+- **Internal Padding:** ~2.1rem; dense panels ~2.8rem.
 
 ### Inputs / Fields
-- **Style:** Recessed into the darker ground (#0a0b0d), 1px Strong-Hairline border, 7px radius, Geist Mono text.
-- **Focus:** Border shifts to Signal Green with a `0 0 0 2px rgba(39,224,122,0.2)` green ring; no glow.
-- **Label:** Quiet Geist Mono 0.68rem at letter-spacing 0 in Faint, stacked above the field. Error text red (`.jf-err`), success text green (`.jf-ok`).
+- **Style:** Paper or sand ground, 1px Strong-Hairline border, irregular `16px 12px 18px 11px` radius, Instrument Sans (tabular for number fields).
+- **Focus:** Border shifts to Moss with a `0 0 0 2px rgba(53,66,45,0.18)` moss ring; no glow.
+- **Label:** Quiet Instrument Sans 600, 12px at letter-spacing 0 in Faint, stacked above the field. Error text brick (`.jf-err`), success text moss (`.jf-ok`).
 
 ### Navigation
-- Sticky flat bar (62px), translucent graphite (rgba(14,15,18,0.82)) with a 12px backdrop-blur and a 1px Hairline base. Links are Geist 500, 0.92rem, letter-spacing -0.01em, in Muted; hover → near-white. Wordmark is near-white with a Signal-Green mark.
+- Sticky sheet-edge bar (64px), translucent sand (rgba(238,230,214,0.86)) with a 10px backdrop-blur and a 1px Strong-Hairline base. Links are Instrument Sans 500, 15px, in Ink-Muted; hover → Moss. Wordmark is Source Serif 4 600 in dark ink with a Moss mark.
 
 ### The Flip Board (signature)
-The live table of flips, inside a hairline frame (10px, bottom-rounded under the hero). Sticky header row on Raised Panel (#1a1d22) with quiet Faint mono labels; sortable headers go near-white on hover and Signal Green when active. Figures are right-aligned Geist Mono tabular; the item name is the one left-aligned cell. Rows are ruled by 1px Hairline and warm to Panel (#15171b) on hover. The margin cell carries the Lit-Means-Liquid Rule (full green when real+liquid, dim green otherwise); tax is Faint, losses are red. Thin/low-liquidity rows dim the item name to Faint and carry a red flag. Members items carry a small green bordered "P" tag (`.mtag`).
+The live table of flips, inside a hairline frame with control-radius corners (bottom-joined under the hero lede). Sticky header row on Stone (#ddd5c3) with quiet Faint sentence-case labels; sortable headers go Moss on hover and when active. Figures are right-aligned Instrument Sans tabular; the item name is the one left-aligned cell. Rows are ruled by 1px Warm Hairline and warm to Sand (#eee6d6) on hover. Tax is Faint, losses are brick. Thin/low-liquidity rows dim the item name to Faint and carry a brick flag. Members items carry a small moss "P" tag (`.mtag`) on the tag radius.
+
+### Honest Ledger & Tax Basin (signature fields)
+Two full-bleed flat earth fields. The honest "does / doesn't" ledger is one shared Fired-Clay (#694737) field with light on-field ink, split by a translucent light hairline, marked by drawn organic blobs (dried-grass filled, terracotta hollow). The tax arithmetic sits in a Moss (#35422d) basin with a darkened inset formula panel, emphasized terms in dried-grass. Both are flat — no shadow — and collapse to one column at 820px.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** keep the ground cool graphite (#0e0f12) and layer depth with tone (#0a0b0d → #15171b → #1a1d22), not shadow.
-- **Do** spend color only as signal: Signal Green (#27e07a) for gain, Loss Red (#ff5c5c) for loss, nothing else.
-- **Do** reserve full Signal Green for a profit that is real AND liquid (the Lit-Means-Liquid Rule); keep unproven profit Dim Green (#1c7d4b).
-- **Do** draw structure with 1px hairlines (#22262b / #2f343b) and keep surfaces flat.
-- **Do** set every market figure in Geist Mono with tabular-nums; buy emphasis with weight and scale.
-- **Do** keep corners soft-square (10px panels / 7px controls) and borders 1px.
+- **Do** keep the ground warm sand (#eee6d6) with the faint authored paper grain, and work on paper sheets (#f5eddf) in dark-brown ink (#29251d).
+- **Do** spend color only within the earth family: moss primary, fired-clay/terracotta secondaries, dried-grass highlight, brick (#a2432a) for loss.
+- **Do** put dark ink on paper and light on-field ink (#f1ead9) on the moss/clay fields — never mix the two (the Paper-and-Field Rule).
+- **Do** cut every sheet and control with an irregular asymmetric radius; use the four established radius tokens, never a uniform corner.
+- **Do** set statements/headings in Source Serif 4 600 and everything read/operated in Instrument Sans; render every figure in tabular Instrument Sans.
+- **Do** keep sheets nearly flat — at most the single faint Sheet-Lift; flat earth fields get no shadow.
 
 ### Don't:
-- **Don't** reintroduce warm/fantasy dressing — no gold, parchment, wood, carved-stone, coin-gold or glow. The owner rejected these as "AI slop".
-- **Don't** add a third hue — no blue, no status palette, no decorative tint. Green already means up, red means down.
-- **Don't** float a surface on a soft grey drop-shadow; separate surfaces with tone or a hairline.
-- **Don't** use bevels, inner-light modelling, or gradient-filled text; emphasis is weight, scale and the flat accent.
-- **Don't** put an all-caps / tracked-out eyebrow or kicker above a heading. Labels are quiet mono at letter-spacing 0.
-- **Don't** use pills, large radii, or organic curves; the form language is restrained soft-square.
+- **Don't** introduce a hue from outside the earth family — no blue, no gold, no purple, no status palette. Warmth comes from pigment and paper, not shine.
+- **Don't** add gradients-as-decoration, bevels, inner-light modelling or glow; the surface is paper and pigment.
+- **Don't** float a sheet on a heavy grey drop-shadow or stack elevation layers; separate surfaces with tone or a warm hairline.
+- **Don't** use uniform or 0-radius corners, or symmetric pills; corners are hand-cut and irregular.
+- **Don't** put an all-caps / tracked-out eyebrow or kicker above a heading; labels are quiet sentence-case Instrument Sans at letter-spacing 0.
+- **Don't** reach for a monospace face for figures; precision is tabular Instrument Sans.
 
-<!-- not canonized: (1) globals.css retains legacy color aliases from prior worlds — `--gold`/`--gold-2`/`--gold-deep` aliased onto the greens, `--green`/`--red` onto `--gain`/`--loss`, and `--font-display` onto `--font-sans` — and a legacy `.eyebrow` class (now neutralized to text-transform:none / letter-spacing 0, mono faint). These are carried so older selectors keep resolving; they are drift, not sanctioned tokens, and new work must not resurrect `--gold`/eyebrows as design devices. The all-caps eyebrow is a brand/craft-floor defect banned by AGENTS.md and PRODUCT.md. (2) The landing (page.tsx) applies `.pos.lit` (full green) to every margin row rather than gating on real liquidity; the Lit-Means-Liquid Rule is the system intent and `.pos`/`.pos.lit` are the correct tokens, but that blanket application is a surface-level deviation. (3) Hero/section copy still carries a stray runestone-era phrase ("chiselled in") — stale content, not a visual token. Nothing repaired: write boundary excludes web/. Reported as pre-existing drift. -->
+<!-- not canonized (pre-existing drift; nothing repaired — write boundary excludes web/): (1) globals.css carries legacy color/type aliases from prior worlds, now re-pointed into the earth family: --gold/--gold-2/--gold-deep alias onto moss/terracotta/clay, --green/--red onto --gain/--loss, --font-mono onto --font-sans, and the classes .btn-gold / .ink-gold / .mono persist. These are carried so older selectors keep resolving; they are drift, not sanctioned tokens — new work must not resurrect a literal "gold" or a mono face as a design device. (2) A legacy .eyebrow class survives (neutralized to text-transform:none, letter-spacing 0, faint); it is unused on the landing. The all-caps eyebrow/kicker is a craft-floor defect banned by AGENTS.md and PRODUCT.md and is recorded here as a carried defect, not a design device. The pricing .plan .rec badge uses uppercase + 0.08em tracking on the "recommended" tag — a localized tracked-caps label, not sanctioned as an eyebrow above headings. (3) The landing (page.tsx line 91) applies `.pos.lit` (full-charge profit, opacity 1 / weight 600) to every margin row rather than gating on real liquidity; the quiet-until-proven intent (.pos opacity 0.72 → .pos.lit) is the system, and that blanket application is a surface-level deviation. -->
