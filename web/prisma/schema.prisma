@@ -150,3 +150,37 @@ model ItemCategory {
 
   @@index([category])
 }
+
+// Reference data: equipment bonuses for every player-equipable item, powering
+// the sortable gear-comparison table (/gear). Sourced from osrsreboxed-db by
+// scripts/ingest-equipment.mjs (wipe-and-reload). Not per-user. Stats mirror
+// the in-game Equipment Stats panel; magic damage is a whole percent.
+model EquipmentStats {
+  itemId    Int     @id
+  name      String
+  slot      String // head, cape, neck, ammo, weapon, body, shield, legs, hands, feet, ring, 2h
+  members   Boolean @default(false)
+  tradeable Boolean @default(false)
+
+  aStab  Int @default(0) // attack: stab
+  aSlash Int @default(0) // attack: slash
+  aCrush Int @default(0) // attack: crush
+  aMagic Int @default(0) // attack: magic
+  aRange Int @default(0) // attack: ranged
+  dStab  Int @default(0) // defence: stab
+  dSlash Int @default(0) // defence: slash
+  dCrush Int @default(0) // defence: crush
+  dMagic Int @default(0) // defence: magic
+  dRange Int @default(0) // defence: ranged
+  str    Int @default(0) // melee strength
+  rStr   Int @default(0) // ranged strength
+  mDmg   Int @default(0) // magic damage, whole percent
+  prayer Int @default(0) // prayer bonus
+
+  weaponType  String? // only weapons: whip, bow, scythe, …
+  attackSpeed Int? // only weapons: ticks per attack (lower is faster)
+
+  icon String? // the item sprite as a base64 PNG, served via /api/item-icon/[id]
+
+  @@index([slot])
+}
