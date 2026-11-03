@@ -11,7 +11,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "ingest:recipes": "node scripts/ingest-recipes.mjs",
-    "ingest:categories": "node scripts/ingest-categories.mjs"
+    "ingest:categories": "node scripts/ingest-categories.mjs",
+    "ingest:equipment": "node scripts/ingest-equipment.mjs"
   },
   "dependencies": {
     "@prisma/client": "6.1.0",
