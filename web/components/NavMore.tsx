@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/new", label: "New items" },
   { href: "/board", label: "Full board" },
   { href: "/items", label: "Items" },
+  { href: "/gear", label: "Gear stats" },
   { href: "/craft", label: "Craft" },
   { href: "/watchlist", label: "Watchlist" },
   { href: "/journal", label: "Journal" },
