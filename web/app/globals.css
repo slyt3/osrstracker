@@ -21,6 +21,7 @@
   --gold:   #ffc24a;
   --gold-2: #ffdd8a;
   --gold-deep: #b9811f;
+  --chart-buy: #5aa9f0;   /* price-chart buy (bid) series — paired with gold */
   /* market signal */
   --gain:  #46d37e;
   --gain-dim: #2c7d4f;
@@ -288,6 +289,7 @@ table.board th:first-child, table.board td.starcell { width: 2.4rem; text-align:
 /* ---------- price chart ---------- */
 .pricechart { width: 100%; height: auto; display: block; }
 .pricechart .axis { fill: var(--faint); font-family: var(--font-mono), monospace; font-size: 11px; }
+.pricechart .pc-end { font-family: var(--font-mono), monospace; font-size: 12px; font-weight: 600; }
 .chart-legend { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 0.6rem; color: var(--muted); font-size: 0.82rem; font-family: var(--font-mono), monospace; }
 .chart-legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 0.4rem; vertical-align: middle; }
 .chart-smooth { display: inline-flex; align-items: center; gap: 0.35rem; margin-left: auto; cursor: pointer; user-select: none; }
